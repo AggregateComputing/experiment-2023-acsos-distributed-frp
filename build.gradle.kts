@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     application
+    scala
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.qa)
@@ -38,11 +39,11 @@ multiJvm {
 }
 
 dependencies {
+    implementation("org.scala-lang:scala3-library_3:3.2.2")
+    implementation("nz.sodium:sodium:1.2.0")
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.bundles.alchemist.protelis)
-    if (!GraphicsEnvironment.isHeadless()) {
-        implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
-    }
+    implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
 }
 
 // Heap size estimation for batches
@@ -92,7 +93,7 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
             if (System.getenv("CI") == "true") {
                 args("-hl", "-t", "2")
             } else {
-                args("-g", "effects/${it.nameWithoutExtension}.json")
+                args("-g", "effects/simulation.json")
             }
             javaLauncher.set(
                 javaToolchains.launcherFor {
