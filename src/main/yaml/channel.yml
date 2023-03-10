@@ -45,9 +45,9 @@ deployments:
       concentration: true
     - in:
         type: Rectangle
-        parameters: [ 4, 4, 1, 1 ]
-        molecule: destination
-        concentration: true
+        parameters: [ 4, 4, 2, 2 ]
+      molecule: destination
+      concentration: true
     - in:
         type: Rectangle
         parameters: [ -4, -1, 8, 2 ]

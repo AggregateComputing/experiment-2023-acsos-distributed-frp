@@ -32,6 +32,6 @@ class Channel extends ProgramFactory:
     branch(sensor[Boolean]("obstacle")) {
       constant(false)
     } {
-      channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 2)
+      channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 1.0)
     }
 
