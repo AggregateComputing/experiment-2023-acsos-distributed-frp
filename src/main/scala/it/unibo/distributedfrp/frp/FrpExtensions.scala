@@ -7,10 +7,9 @@ import nz.sodium.time.SecondsTimerSystem
 
 object FrpExtensions:
   given Liftable[Cell] with
-    extension[A] (a: Cell[A])
-      def map[B](f: A => B): Cell[B] =
-        val fLambda: Lambda1[A, B] = f(_)
-        a.map(fLambda)
+    def lift[A, B](a: Cell[A])(f: A => B): Cell[B] =
+      val fLambda: Lambda1[A, B] = f(_)
+      a.map(fLambda)
 
     override def lift[A, B, C](a: Cell[A], b: Cell[B])(f: (A, B) => C): Cell[C] =
       a.lift(b, (aa, bb) => f(aa, bb))

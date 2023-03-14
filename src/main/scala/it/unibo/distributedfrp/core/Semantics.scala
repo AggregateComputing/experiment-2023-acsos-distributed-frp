@@ -28,8 +28,8 @@ trait Semantics:
     def neighbors: Cell[Map[DeviceId, NeighborState]]
 
   override val neighborFieldLiftable: Liftable[NeighborField] = new Liftable[NeighborField]:
-    extension[A] (field: NeighborField[A]) def map[B](f: A => B): NeighborField[B] =
-      field.map((d, x) => (d, f(x)))
+    def lift[A, B](a: NeighborField[A])(f: A => B): NeighborField[B] =
+      a.map((d, x) => (d, f(x)))
 
     override def lift[A, B, C](a: NeighborField[A], b: NeighborField[B])(f: (A, B) => C): NeighborField[C] =
       val commonDevices = a.keySet intersect b.keySet
@@ -60,9 +60,9 @@ trait Semantics:
   private def ctx(using Context): Context = summon[Context]
 
   override val flowLiftable: Liftable[Flow] = new Liftable[Flow]:
-    extension[A] (flow: Flow[A]) def map[B](f: A => B): Flow[B] =
+    override def lift[A, B](a: Flow[A])(f: A => B): Flow[B] =
       Flows.of { path =>
-        flow.run(path :+ Operand(0)).map(e => ExportTree(f(e.root), Operand(0) -> e))
+        a.run(path :+ Operand(0)).map(e => ExportTree(f(e.root), Operand(0) -> e))
       }
 
     override def lift[A, B, C](a: Flow[A], b: Flow[B])(f: (A, B) => C): Flow[C] =

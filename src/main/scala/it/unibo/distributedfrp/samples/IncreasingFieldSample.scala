@@ -1,7 +1,7 @@
 package it.unibo.distributedfrp.samples
 
 import it.unibo.distributedfrp.simulation.{Environment, SimulationIncarnation, Simulator}
-import it.unibo.distributedfrp.utils.Liftable.lift
+import it.unibo.distributedfrp.utils.Liftable.*
 
 @main def loopSample(): Unit =
   val environment = Environment.manhattanGrid(2, 1)

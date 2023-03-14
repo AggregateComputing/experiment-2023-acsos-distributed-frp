@@ -2,6 +2,7 @@ package it.unibo.distributedfrp.samples
 
 import it.unibo.distributedfrp.simulation.{Environment, SimulationIncarnation, Simulator}
 import it.unibo.distributedfrp.frp.IncrementalCellSink
+import it.unibo.distributedfrp.utils.Liftable.*
 
 @main def testReEvaluation(): Unit =
   val sourcesSink = IncrementalCellSink(Set.empty[Int])

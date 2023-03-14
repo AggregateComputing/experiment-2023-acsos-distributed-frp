@@ -2,12 +2,12 @@ package it.unibo
 
 import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnation
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.distributedfrp.utils.Liftable.{lift, liftTwice}
+import it.unibo.distributedfrp.utils.Liftable.*
 
 class Channel extends ProgramFactory:
-  def create[P <: Position[P], Any](incarnation: DistributedFrpIncarnation[P]): incarnation.Flow[?] =
+  def create[P <: Position[P]](incarnation: DistributedFrpIncarnation[P]): incarnation.Flow[?] =
     import incarnation.{*, given}
-    def distanceTo(src: Flow[Boolean]): Flow[Double] =
+    def gradient(src: Flow[Boolean]): Flow[Double] =
       loop(Double.PositiveInfinity) { distance =>
         mux(src) {
           constant(0.0)
@@ -16,22 +16,38 @@ class Channel extends ProgramFactory:
         }
       }
 
-    def distanceBetween(source: Flow[Boolean], destination: Flow[Boolean]): Flow[Double] =
-      val gradient = distanceTo(source)
-      val distance = distanceTo(destination)
-      mux(source) {
-        distance
-      } {
-        nbr(lift(distance, gradient)(_ -> _)).withoutSelf.toSet.map(set => set.minByOption(_._2).map(_._1).getOrElse(Double.PositiveInfinity))
+    def dilate(region: Flow[Boolean], width: Double): Flow[Boolean] =
+      gradient(region).map(_ <= width)
+
+    def broadcast[T](source: Flow[Boolean], value: Flow[T]): Flow[T] =
+      val broadcastResult = loop[(Double, Option[T])]((Double.PositiveInfinity, None)) { d =>
+        mux(source) {
+          value.map(0.0 -> Some(_))
+        } {
+          val n = nbr(d)
+          val distances = n.mapTwice(_._1)
+          val values = n.mapTwice(_._2)
+          val field = liftTwice(distances, nbrRange, values)((ds, ra, va) => (ds + ra) -> va)
+          field.withoutSelf.map(_.values.minByOption(_._1).getOrElse((Double.PositiveInfinity, None)))
+        }
       }
+      lift(broadcastResult, value)(_._2.getOrElse(_))
+
+    def distanceBetween(source: Flow[Boolean], destination: Flow[Boolean]): Flow[Double] =
+      broadcast(destination, gradient(source))
 
     def channel(source: Flow[Boolean], destination: Flow[Boolean], width: Double): Flow[Boolean] =
-      val distance = lift(distanceTo(source), distanceTo(destination))(_ - _)
-      lift(distance, distanceBetween(source, destination))(_ <= _ + width)
+      dilate(lift(gradient(source), gradient(destination), distanceBetween(source, destination))((s, d, dst) => s + d <= dst), width)
 
-    branch(sensor[Boolean]("obstacle")) {
+//    channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 3.0)
+    val src = sensor[Boolean]("source")
+    val dst = sensor[Boolean]("destination")
+    val obs = sensor[Boolean]("obstacle")
+    branch(obs) {
       constant(false)
     } {
-      channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 1.0)
+      channel(src, dst, 1)
     }
+    //.map(x => (x * 100).round / 100.0)
+
 

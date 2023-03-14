@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.distributedfrp.utils.Liftable.liftTwice
 
 class Gradient extends ProgramFactory:
-  def create[P <: Position[P], Any](incarnation: DistributedFrpIncarnation[P]): incarnation.Flow[?] =
+  def create[P <: Position[P]](incarnation: DistributedFrpIncarnation[P]): incarnation.Flow[?] =
     import incarnation.{*, given}
     def gradient(src: Flow[Boolean]): Flow[Double] =
       loop(Double.PositiveInfinity) { distance =>

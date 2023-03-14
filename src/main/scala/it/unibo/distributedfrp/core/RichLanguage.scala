@@ -2,6 +2,7 @@ package it.unibo.distributedfrp.core
 
 import it.unibo.distributedfrp.core.Slot.Operand
 import it.unibo.distributedfrp.utils.{Bounded, Liftable, LowerBounded, UpperBounded}
+import it.unibo.distributedfrp.utils.Liftable.*
 
 trait RichLanguage extends Language:
   self: Core =>
