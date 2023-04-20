@@ -1,11 +1,13 @@
 package it.unibo.alchemist.model.implementations.reactions
 
-import it.unibo.{ProgramFactory, Loop}
+import it.unibo.{Loop, ProgramFactory}
 import it.unibo.alchemist.model.implementations.actions.{AbstractAction, DistributedFrpIncarnation, SendToNeighborhood}
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.*
+import it.unibo.distributed.frp.Molecules
 import org.danilopianini.util.{ListSet, ListSets}
+import it.unibo.distributed.frp.Molecules.*
 
 import _root_.scala.jdk.CollectionConverters.IterableHasAsScala
 import java.util
@@ -15,7 +17,6 @@ class DistributedFrpGlobalReaction[P <: Position[P]](
     distribution: TimeDistribution[Any],
     programFactory: String
 ) extends GlobalReaction[Any]:
-
   private var executed = false
   private val factory =
     Class.forName(programFactory).getDeclaredConstructor().newInstance().asInstanceOf[ProgramFactory]
@@ -65,7 +66,7 @@ class DistributedFrpGlobalReaction[P <: Position[P]](
         node.setConcentration(SimpleMolecule("timeDiff"), math.exp(diff / 2))
         val neighborhood = environment.getNeighborhood(node).asScala.toList
         node
-          .getConcentration(SimpleMolecule("context"))
+          .getConcentration(Molecules.Context)
           .asInstanceOf[DistributedFrpIncarnation[P]#Context]
           .heartbeat(neighborhood)
       }

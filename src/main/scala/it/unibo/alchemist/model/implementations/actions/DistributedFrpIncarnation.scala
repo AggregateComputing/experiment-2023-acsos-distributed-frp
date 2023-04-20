@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position}
+import it.unibo.distributed.frp.Molecules
 import it.unibo.distributedfrp.core.Incarnation
 import it.unibo.distributedfrp.frp.IncrementalCellSink
 import it.unibo.distributedfrp.simulation.{IncarnationWithEnvironment, TestLocalSensors, TestNeighborSensors}
@@ -26,7 +27,7 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
       molecule.getName -> new IncrementalCellSink(value, calm = true)
     }
     // Todo fix the alignment with molecules
-    node.setConcentration(new SimpleMolecule("context"), this)
+    node.setConcentration(Molecules.Context, this)
 
     cells.foreach((value, cell) => node.setConcentration(new SimpleMolecule(value + "-sink"), cell))
     // Todo think how to call it using reactions
