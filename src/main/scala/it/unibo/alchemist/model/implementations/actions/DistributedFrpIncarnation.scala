@@ -7,6 +7,7 @@ import it.unibo.distributedfrp.core.Incarnation
 import it.unibo.distributedfrp.frp.IncrementalCellSink
 import it.unibo.distributedfrp.simulation.{IncarnationWithEnvironment, TestLocalSensors, TestNeighborSensors}
 import nz.sodium.Cell
+import it.unibo.alchemist.model.implementations.PimpAlchemist.*
 
 import _root_.scala.jdk.CollectionConverters.MapHasAsScala
 import scala.math.hypot
@@ -22,15 +23,14 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
 
   class SimulationContext(val node: Node[Any]) extends BasicContext:
     override def selfId: DeviceId = node.getId
-
-    private val cells = node.getContents.asScala.map { case (molecule, value) =>
-      molecule.getName -> new IncrementalCellSink(value, calm = true)
-    }
-    // Todo fix the alignment with molecules
     node.setConcentration(Molecules.Context, this)
-
-    cells.foreach((value, cell) => node.setConcentration(new SimpleMolecule(value + "-sink"), cell))
-    // Todo think how to call it using reactions
+    val molecules = node.getContents.asScala.toList.map(_._1)
+    // SIDE EFFECTS!
+    molecules
+      .tapEach(molecule => node.createSinkFromMolecule(molecule)) // create sinks for each molecule
+      .foreach { molecule => // align molecule with sinks updates
+        node.getSinkFromMolecule(molecule).cell.listen(data => node.setConcentration(molecule, data))
+      }
     private val neighborsSink = new IncrementalCellSink[Map[DeviceId, NeighborState]](Map.empty, calm = true)
 
     def receiveExport(`export`: Export[Any], neighbor: Node[Any]): Unit =
@@ -47,11 +47,12 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
       }
     override def neighbors: Cell[Map[DeviceId, NeighborState]] = neighborsSink.cell
 
-    override def sensor[A](id: LocalSensorId): Cell[A] = cells(id).cell.map(_.asInstanceOf[A])
+    override def sensor[A](id: LocalSensorId): Cell[A] =
+      node.getSinkFromMolecule(new SimpleMolecule(id)).cell.map(_.asInstanceOf[A])
 
   case class SimulationNeighborState(node: Node[Any], neighbor: Node[Any], exported: Export[Any])
       extends BasicNeighborState:
-    import SimulationNeighborSensor._
+    import SimulationNeighborSensor.*
     override def sensor[A](id: NeighborSensorId): A = id match
       case NbrRange =>
         environment.getDistanceBetweenNodes(node, neighbor).asInstanceOf[A]

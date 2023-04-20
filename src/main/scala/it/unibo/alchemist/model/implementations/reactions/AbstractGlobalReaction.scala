@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.*
 import org.danilopianini.util.{ListSet, ListSets}
 
 import java.util
-trait AbstractGlobalReaction[P <: Position[P]] extends GlobalReaction[Any] {
+trait AbstractGlobalReaction[P <: Position[P]] extends GlobalReaction[Any]:
   def environment: Environment[Any, P]
   def distribution: TimeDistribution[Any]
 
@@ -13,15 +13,13 @@ trait AbstractGlobalReaction[P <: Position[P]] extends GlobalReaction[Any] {
 
   override def getActions: util.List[Action[Any]] = actions
 
-  override def setActions(list: util.List[_ <: Action[Any]]): Unit = {
+  override def setActions(list: util.List[_ <: Action[Any]]): Unit =
     actions.clear()
     actions.addAll(list)
-  }
 
-  override def setConditions(list: util.List[_ <: Condition[Any]]): Unit = {
+  override def setConditions(list: util.List[_ <: Condition[Any]]): Unit =
     conditions.clear()
     conditions.addAll(list)
-  }
 
   override def getConditions: util.List[Condition[Any]] = conditions
 
@@ -42,5 +40,3 @@ trait AbstractGlobalReaction[P <: Position[P]] extends GlobalReaction[Any] {
   override def getRate: Double = distribution.getRate
 
   override def getTau: Time = distribution.getNextOccurence
-
-}

@@ -13,13 +13,15 @@ import it.unibo.distributed.frp.Molecules
 import java.util.List as JList
 class InitFrpGlobalReaction[P <: Position[P]](val environment: Environment[Any, P], val programFactory: String)
     extends AbstractGlobalReaction[P]:
+
+  override val distribution: TimeDistribution[Any] = DiracComb(Time.ZERO, 1.0)
+
   private val sendingTime: Time = DoubleTime(1)
   private val factory =
     Class.forName(programFactory).getDeclaredConstructor().newInstance().asInstanceOf[ProgramFactory]
-  lazy val globalIncarnation = new DistributedFrpIncarnation[P](environment)
-  override val distribution: TimeDistribution[Any] = DiracComb(Time.ZERO, 1.0)
+  private lazy val globalIncarnation = new DistributedFrpIncarnation[P](environment)
 
-  override def execute(): Unit = {
+  override def execute(): Unit =
     val program = factory.create(globalIncarnation)
     val contexts = environment.getNodes.asScala.toList.map(node => globalIncarnation.context(node.getId))
     for context <- contexts do
@@ -31,14 +33,13 @@ class InitFrpGlobalReaction[P <: Position[P]](val environment: Environment[Any, 
           // TODO: perhaps we should add more "randomness" to the sending time
           val copied =
             getTimeDistribution.cloneOnNewNode(context.node, environment.getSimulation.getTime.plus(sendingTime))
-          val event = new Event[Any](context.node, copied)
+          val event = new Event(context.node, copied)
           context.node.getReactions.asScala.toList.foreach { reaction =>
             context.node.removeReaction(reaction)
             environment.getSimulation.reactionRemoved(reaction)
           }
-          event.setActions(JList.of(SendToNeighborhood[P](context.node, environment, v)))
+          event.setActions(JList.of(SendToNeighborhood(context.node, environment, v)))
           context.node.addReaction(event)
           environment.getSimulation.reactionAdded(event)
         }
     distribution.update(Time.INFINITY, true, getRate, environment) // as it removes the current reaction
-  }
