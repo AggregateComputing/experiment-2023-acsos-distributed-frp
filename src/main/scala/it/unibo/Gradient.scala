@@ -15,7 +15,7 @@ class Gradient extends ProgramFactory:
           liftTwice(nbrRange, nbr(distance))(_ + _).withoutSelf.min
         }
       }
-      
+
     branch(sensor[Boolean]("obstacle")) {
       constant(-1.0)
     } {

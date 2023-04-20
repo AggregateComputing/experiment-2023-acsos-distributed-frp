@@ -14,16 +14,6 @@ plugins {
 repositories {
     mavenCentral()
 }
-/*
- * Only required if you plan to use Protelis, remove otherwise
- */
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/protelis")
-        }
-    }
-}
 
 val usesJvm: Int = File(File(projectDir, "docker/sim"), "Dockerfile")
     .readLines()
@@ -41,6 +31,8 @@ multiJvm {
 dependencies {
     implementation("org.scala-lang:scala3-library_3:3.2.2")
     implementation("nz.sodium:sodium:1.2.0")
+    implementation("io.github.cric96:distributed-frp_3:0.1.2")
+
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.bundles.alchemist.protelis)
     implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")

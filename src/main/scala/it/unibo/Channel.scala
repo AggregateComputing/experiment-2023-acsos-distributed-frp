@@ -15,7 +15,6 @@ class Channel extends ProgramFactory:
           liftTwice(nbrRange, nbr(distance))(_ + _).withoutSelf.min
         }
       }
-
     def dilate(region: Flow[Boolean], width: Double): Flow[Boolean] =
       gradient(region).map(_ <= width)
 
@@ -37,7 +36,12 @@ class Channel extends ProgramFactory:
       broadcast(destination, gradient(source))
 
     def channel(source: Flow[Boolean], destination: Flow[Boolean], width: Double): Flow[Boolean] =
-      dilate(lift(gradient(source), gradient(destination), distanceBetween(source, destination))((s, d, dst) => s + d <= dst), width)
+      dilate(
+        lift(gradient(source), gradient(destination), distanceBetween(source, destination))((s, d, dst) =>
+          s + d <= dst
+        ),
+        width
+      )
 
 //    channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 3.0)
     val src = sensor[Boolean]("source")
@@ -48,6 +52,4 @@ class Channel extends ProgramFactory:
     } {
       channel(src, dst, 1)
     }
-    //.map(x => (x * 100).round / 100.0)
-
-
+//.map(x => (x * 100).round / 100.0)

@@ -4,6 +4,5 @@ import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnatio
 import it.unibo.alchemist.model.interfaces.Position
 
 
-trait ProgramFactory {
+trait ProgramFactory:
   def create[P <: Position[P]](incarnation: DistributedFrpIncarnation[P]): incarnation.Flow[?]
-}
