@@ -22,9 +22,11 @@ environment:
   parameters: []
   global-programs:
     - time-distribution: 1
-      type: DistributedFrpGlobalReaction
+      type: InitFrpGlobalReaction
       parameters: [ "it.unibo.Gradient" ]
-
+    - time-distribution: 1
+      type: HeartBeat
+      parameters: [ ]
 network-model:
   type: ConnectWithinDistance
   parameters: [0.75]

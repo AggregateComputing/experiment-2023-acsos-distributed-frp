@@ -22,8 +22,11 @@ environment:
   parameters: []
   global-programs:
     - time-distribution: 1
-      type: DistributedFrpGlobalReaction
+      type: InitFrpGlobalReaction
       parameters: [ "it.unibo.Channel" ]
+    - time-distribution: 1
+      type: HeartBeat
+      parameters: [ ]
 
 network-model:
   type: ConnectWithinDistance
