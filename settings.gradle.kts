@@ -11,4 +11,4 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = "alchemist-experiments-bootstrap"
+rootProject.name = "dente-distributed-frp-showcase"
