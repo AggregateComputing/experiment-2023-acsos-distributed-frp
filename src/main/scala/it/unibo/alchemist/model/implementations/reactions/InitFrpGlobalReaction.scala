@@ -9,17 +9,21 @@ import it.unibo.alchemist.model.interfaces.{Environment, Position, Time, TimeDis
 import _root_.scala.jdk.CollectionConverters.IterableHasAsScala
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.distributed.frp.Molecules
+import org.apache.commons.math3.random.RandomGenerator
 
 import java.util.List as JList
-class InitFrpGlobalReaction[P <: Position[P]](val environment: Environment[Any, P], val programFactory: String)
-    extends AbstractGlobalReaction[P]:
+class InitFrpGlobalReaction[P <: Position[P]](
+    val environment: Environment[Any, P],
+    val randomGenerator: RandomGenerator,
+    programFactory: String
+) extends AbstractGlobalReaction[P]:
 
   override val distribution: TimeDistribution[Any] = DiracComb(Time.ZERO, 1.0)
 
   private val sendingTime: Time = DoubleTime(1)
   private val factory =
     Class.forName(programFactory).getDeclaredConstructor().newInstance().asInstanceOf[ProgramFactory]
-  private lazy val globalIncarnation = new DistributedFrpIncarnation[P](environment)
+  private lazy val globalIncarnation = new DistributedFrpIncarnation[P](environment, randomGenerator)
 
   override def execute(): Unit =
     val program = factory.create(globalIncarnation)

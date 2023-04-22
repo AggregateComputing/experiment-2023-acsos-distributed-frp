@@ -8,10 +8,11 @@ import it.unibo.distributedfrp.frp.IncrementalCellSink
 import it.unibo.distributedfrp.simulation.{IncarnationWithEnvironment, TestLocalSensors, TestNeighborSensors}
 import nz.sodium.Cell
 import it.unibo.alchemist.model.implementations.PimpAlchemist.*
+import org.apache.commons.math3.random.RandomGenerator
 
 import _root_.scala.jdk.CollectionConverters.MapHasAsScala
 import scala.math.hypot
-class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, P])
+class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, P], val random: RandomGenerator)
     extends Incarnation
     with TestNeighborSensors:
 
