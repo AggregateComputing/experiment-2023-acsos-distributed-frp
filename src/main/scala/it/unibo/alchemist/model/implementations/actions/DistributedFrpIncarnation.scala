@@ -8,7 +8,9 @@ import it.unibo.distributedfrp.frp.IncrementalCellSink
 import it.unibo.distributedfrp.simulation.{IncarnationWithEnvironment, TestLocalSensors, TestNeighborSensors}
 import nz.sodium.Cell
 import it.unibo.alchemist.model.implementations.PimpAlchemist.*
+import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnation.FrpContext
 import org.apache.commons.math3.random.RandomGenerator
+import it.unibo.distributedfrp.utils.Liftable.{lift, map}
 
 import _root_.scala.jdk.CollectionConverters.MapHasAsScala
 import scala.math.hypot
@@ -38,6 +40,11 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
       val neighborState = SimulationNeighborState(node, neighbor, `export`)
       neighborsSink.update(_ + (neighbor.getId -> neighborState))
 
+    def receiveWholeExports(exports: Map[Int, Export[Any]]): Unit =
+      val neighborStates =
+        exports.map((id, `export`) => id -> SimulationNeighborState(node, environment.getNodeByID(id), `export`))
+      neighborsSink.update(_ => neighborStates)
+
     def heartbeat(neighbourhood: List[Node[Any]]): Unit =
       neighborsSink.update { old =>
         val newNeighbourhood = neighbourhood.map(_.getId).toSet
@@ -57,7 +64,19 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
     override def sensor[A](id: NeighborSensorId): A = id match
       case NbrRange =>
         environment.getDistanceBetweenNodes(node, neighbor).asInstanceOf[A]
+  extension [A](flow: Flow[A])
+    def log(key: String): Flow[A] =
+      val id = mid.map(environment.getNodeByID)
+      lift(id, flow) { (node, data) =>
+        node.setConcentration(SimpleMolecule(s"log-$key"), data)
+        data
+      }
 
+  extension (context: Context)
+    def storeTicks(): Unit = if context.node.contains(Molecules.Ticks) then
+      val ticks = context.node.getConcentration(Molecules.Ticks).asInstanceOf[Double]
+      context.node.setConcentration(Molecules.Ticks, ticks + 1.0)
+    else context.node.setConcentration(Molecules.Ticks, 0.0)
 object DistributedFrpIncarnation:
   type FrpContext = DistributedFrpIncarnation[_]#Context
   type Export[A] = DistributedFrpIncarnation[_]#Export[A]

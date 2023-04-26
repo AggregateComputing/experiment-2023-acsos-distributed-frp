@@ -12,12 +12,11 @@ class Channel extends ProgramFactory:
     import libs.I.{given, *}
 
     def channel(source: Flow[Boolean], destination: Flow[Boolean], width: Double): Flow[Boolean] =
-      dilate(
-        lift(gradient(source), gradient(destination), distanceBetween(source, destination))((s, d, dst) =>
-          s + d <= dst
-        ),
-        width
-      )
+      lift(
+        gradient(source),
+        gradient(destination),
+        distanceBetween(source, destination)
+      )((source, destination, distanceBetween) => source + destination <= (distanceBetween + width))
 
 //    channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 3.0)
     val src = sensor[Boolean]("source")
@@ -26,6 +25,6 @@ class Channel extends ProgramFactory:
     branch(obs) {
       constant(false)
     } {
-      channel(src, dst, 1)
+      channel(src, dst, 0.1)
     }.adapt(incarnation)
 //.map(x => (x * 100).round / 100.0)

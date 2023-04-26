@@ -16,10 +16,14 @@ class SendToNeighborhood[P <: Position[P]](
 
   override def execute(): Unit =
     val neighborhood = environment.getNeighborhood(node).getNeighbors.iterator().asScala.toList
-    (node :: neighborhood).foreach { n =>
+    val received = (node :: neighborhood).map { node =>
+      node.getId -> node.getConcentration(Molecules.Export).asInstanceOf[Export[Any]]
+    }.toMap
+    node.getConcentration(Molecules.Context).asInstanceOf[FrpContext].receiveWholeExports(received)
+    /*(node :: neighborhood).foreach { n =>
       n.getConcentration(Molecules.Context)
         .asInstanceOf[FrpContext]
         .receiveExport(data, node)
-    }
+    }*/
 
   override def getContext: Context = Context.NEIGHBORHOOD

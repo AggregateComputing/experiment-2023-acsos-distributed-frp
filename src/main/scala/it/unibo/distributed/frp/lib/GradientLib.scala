@@ -22,6 +22,14 @@ trait GradientLib:
       }
     }
 
+  def gradientWithShare(source: Flow[Boolean]): Flow[Double] = share(constant(Double.PositiveInfinity)) { distance =>
+    mux(source) {
+      constant(0.0)
+    } {
+      liftTwice(nbrRange, distance)(_ + _).withoutSelf.min
+    }
+  }
+
   def broadcast[T](source: Flow[Boolean], value: Flow[T]): Flow[T] =
     val broadcastResult = loop[(Double, Option[T])]((Double.PositiveInfinity, None)) { d =>
       mux(source) {
@@ -36,9 +44,20 @@ trait GradientLib:
     }
     lift(broadcastResult, value)(_._2.getOrElse(_))
 
-  def dilate(region: Flow[Boolean], width: Double): Flow[Boolean] =
-    gradient(region).map(_ <= width)
+  def broadcastWithShare[T](source: Flow[Boolean], value: Flow[T]): Flow[T] =
+    val broadcastResult = share(constant[(Double, Option[T])]((Double.PositiveInfinity, None))) { neigh =>
+      mux(source) {
+        value.map(0.0 -> Some(_))
+      } {
+        val distances = neigh.mapTwice(_._1)
+        val values = neigh.mapTwice(_._2)
+        val field = liftTwice(distances, nbrRange, values)((ds, ra, va) => (ds + ra) -> va)
+        field.withoutSelf.map(_.values.minByOption(_._1).getOrElse((Double.PositiveInfinity, None)))
+      }
+    }
+    lift(broadcastResult, value)(_._2.getOrElse(_))
 
+  def distanceBetweenWithShare(source: Flow[Boolean], destination: Flow[Boolean]): Flow[Double] =
+    broadcastWithShare(destination, gradient(source))
   def distanceBetween(source: Flow[Boolean], destination: Flow[Boolean]): Flow[Double] =
     broadcast(destination, gradient(source))
-

@@ -20,13 +20,22 @@ seeds:
 environment:
   type: Continuous2DEnvironment
   parameters: []
-  global-programs:
-    - time-distribution: 1
-      type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.Channel" ]
-    - time-distribution: 1
-      type: HeartBeat
-      parameters: [ ]
+
+_program: &program
+  - time-distribution: 1
+    # Writing Protelis programs within a YAML file is a bad experience
+    # (some characters need escaping, no syntax highlight, no code suggestions...)
+    # We recommend using the Protelis Eclipse plugin to write your code, then
+    # Loading the code as a module within Alchemist
+    # In order to run this example, make sure that src/main/protelis is part of
+    # your classpath (the Gradle script is already properly configured).
+    program: >
+      import protelis:coord:spreading
+      let result = if(env.get("obstacle")) { false } else { channel(env.get("source"), env.get("destination"), 0.1) }
+      env.put("root", result)
+      result
+
+  - program: send
 
 network-model:
   type: ConnectWithinDistance
@@ -39,8 +48,6 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
-    - molecule: ticks
-      concentration: 0
     - molecule: destination
       concentration: false
     - in:
@@ -58,3 +65,4 @@ deployments:
         parameters: [ -4, -1, 8, 2 ]
       molecule: obstacle
       concentration: true
+  programs: *program

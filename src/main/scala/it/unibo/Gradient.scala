@@ -14,5 +14,5 @@ class Gradient extends ProgramFactory:
     branch(sensor[Boolean]("obstacle")) {
       constant(-1.0)
     } {
-      gradient(sensor[Boolean]("source"))
+      gradientWithShare(sensor[Boolean]("source"))
     }.adapt(incarnation)

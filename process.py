@@ -54,6 +54,7 @@ def mergeDicts(d1, d2):
     d1: dict
         dictionary whose values are sets
     d2: dict
+    parameters: 50.0
         dictionary whose values are sets
 
     Returns
@@ -178,19 +179,19 @@ def beautifyValue(v):
 if __name__ == '__main__':
     # CONFIGURE SCRIPT
     # Where to find Alchemist data files
-    directory = 'data'
+    directory = 'data/reactive'
     # Where to save charts
     output_directory = 'charts'
     # How to name the summary of the processed data
     pickleOutput = 'data_summary'
     # Experiment prefixes: one per experiment (root of the file name)
-    experiments = ['simulation']
+    experiments = ['gradient']
     floatPrecision = '{: 0.3f}'
     # Number of time samples 
     timeSamples = 100
     # time management
     minTime = 0
-    maxTime = 50
+    maxTime = 100
     timeColumnName = 'time'
     logarithmicTime = False
     # One or more variables are considered random and "flattened"
@@ -230,17 +231,8 @@ if __name__ == '__main__':
         return r'\|' + x + r'\|'
 
     labels = {
-        'nodeCount': Measure(r'$n$', 'nodes'),
-        'harmonicCentrality[Mean]': Measure(f'${expected("H(x)")}$'),
-        'meanNeighbors': Measure(f'${expected(cardinality("N"))}$', 'nodes'),
-        'speed': Measure(r'$\|\vec{v}\|$', r'$m/s$'),
-        'msqer@harmonicCentrality[Max]': Measure(r'$\max{(' + mse(centrality_label) + ')}$'),
-        'msqer@harmonicCentrality[Min]': Measure(r'$\min{(' + mse(centrality_label) + ')}$'),
-        'msqer@harmonicCentrality[Mean]': Measure(f'${expected(mse(centrality_label))}$'),
-        'msqer@harmonicCentrality[StandardDeviation]': Measure(f'${stdev_of(mse(centrality_label))}$'),
-        'org:protelis:tutorial:distanceTo[max]': Measure(r'$m$', 'max distance'),
-        'org:protelis:tutorial:distanceTo[mean]': Measure(r'$m$', 'mean distance'),
-        'org:protelis:tutorial:distanceTo[min]': Measure(r'$m$', ',min distance'),
+        'root[mean]': Measure(r'output'),
+        'ticks[sum]': Measure(r'ticks', 'count'),
     }
     def derivativeOrMeasure(variable_name):
         if variable_name.endswith('dt'):
@@ -262,7 +254,7 @@ if __name__ == '__main__':
             lastTimeProcessed = pickle.load(open('timeprocessed', 'rb'))
         except:
             lastTimeProcessed = -1
-        shouldRecompute = not os.path.exists(".skip_data_process") and newestFileTime != lastTimeProcessed
+        shouldRecompute = True
         if not shouldRecompute:
             try:
                 means = pickle.load(open(pickleOutput + '_mean', 'rb'))
@@ -406,6 +398,7 @@ if __name__ == '__main__':
     for experiment in experiments:
         current_experiment_means = means[experiment]
         current_experiment_errors = stdevs[experiment]
+        print(current_experiment_means)
         generate_all_charts(current_experiment_means, current_experiment_errors, basedir = f'{experiment}/all')
         
 # Custom charting

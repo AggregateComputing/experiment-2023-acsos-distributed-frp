@@ -15,12 +15,9 @@ import java.util.List as JList
 class InitFrpGlobalReaction[P <: Position[P]](
     val environment: Environment[Any, P],
     val randomGenerator: RandomGenerator,
+    val distribution: TimeDistribution[Any],
     programFactory: String
 ) extends AbstractGlobalReaction[P]:
-
-  override val distribution: TimeDistribution[Any] = DiracComb(Time.ZERO, 1.0)
-
-  private val sendingTime: Time = DoubleTime(1)
   private val factory =
     Class.forName(programFactory).getDeclaredConstructor().newInstance().asInstanceOf[ProgramFactory]
   private lazy val globalIncarnation = new DistributedFrpIncarnation[P](environment, randomGenerator)
@@ -33,15 +30,20 @@ class InitFrpGlobalReaction[P <: Position[P]](
         .run(Seq.empty)(using context)
         .listen { v =>
           context.node.setConcentration(Molecules.LastComputationTime, environment.getSimulation.getTime.toDouble)
-          environment.getSimulation.schedule(() => context.node.setConcentration(Molecules.Root, v.root))
+          context.node.setConcentration(Molecules.Root, v.root)
+          context.node.setConcentration(Molecules.Export, v)
           // TODO: perhaps we should add more "randomness" to the sending time
           val copied =
-            getTimeDistribution.cloneOnNewNode(context.node, environment.getSimulation.getTime.plus(sendingTime))
+            getTimeDistribution.cloneOnNewNode(
+              context.node,
+              environment.getSimulation.getTime.plus(DoubleTime(distribution.getRate))
+            )
           val event = new Event(context.node, copied)
           context.node.getReactions.asScala.toList.foreach { reaction =>
             context.node.removeReaction(reaction)
             environment.getSimulation.reactionRemoved(reaction)
           }
+          context.storeTicks()
           event.setActions(JList.of(SendToNeighborhood(context.node, environment, v)))
           context.node.addReaction(event)
           environment.getSimulation.reactionAdded(event)
