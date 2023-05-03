@@ -19,12 +19,6 @@ seeds:
 
 _program: &program
   - time-distribution: 1
-    # Writing Protelis programs within a YAML file is a bad experience
-    # (some characters need escaping, no syntax highlight, no code suggestions...)
-    # We recommend using the Protelis Eclipse plugin to write your code, then
-    # Loading the code as a module within Alchemist
-    # In order to run this example, make sure that src/main/protelis is part of
-    # your classpath (the Gradle script is already properly configured).
     type: Event
     actions:
       - type: RunScafiProgram

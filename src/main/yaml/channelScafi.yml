@@ -8,25 +8,26 @@ variables:
     default: 0
   spacing: &spacing
     type: ArbitraryVariable
-    parameters: [0.5, [0.5]]
+    parameters: [0.5, [0.25, 0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.1]]
+    parameters: [0.1, [0.1, 0.2]]
 
 seeds:
   scenario: *seed
   simulation: *seed
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
 
 _program: &program
   - time-distribution: 1
     type: Event
     actions:
       - type: RunScafiProgram
-        parameters: [ it.unibo.ScafiCollect, 1.0 ]
+        parameters: [ it.unibo.ScafiChannel, 1.0 ]
   - program: send
-environment:
-  type: Continuous2DEnvironment
-  parameters: []
 
 network-model:
   type: ConnectWithinDistance
@@ -39,8 +40,10 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
-    - molecule: rounds
+    - molecule: ticks
       concentration: 0.0
+    - molecule: destination
+      concentration: false
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]
@@ -48,26 +51,31 @@ deployments:
       concentration: true
     - in:
         type: Rectangle
-        parameters: [ -6, -1, 8, 2 ]
+        parameters: [ 3, 3, 3, 3 ]
+      molecule: destination
+      concentration: true
+    - in:
+        type: Rectangle
+        parameters: [ -4, -1, 8, 2 ]
       molecule: obstacle
       concentration: true
 
   programs: *program
-
 export:
-    - type: CSVExporter
-      parameters:
-        exportPath: "data"
-        fileNameRoot: "collect_proactive"
-        interval: 1.0
-      data:
-        - time
-        - molecule: "root"
-          aggregators: [ mean ]
-          value-filter: onlyfinite
-        - molecule: "rounds"
-          aggregators: [ sum ]
-          value-filter: onlyfinite
+  - type: CSVExporter
+    parameters:
+      exportPath: "data"
+      fileNameRoot: "gradient"
+      interval: 1.0
+    data:
+      - time
+      - molecule: "root"
+        aggregators: [ mean ]
+        value-filter: onlyfinite
+      - molecule: "rounds"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+
 
 terminate:
   - type: AfterTime

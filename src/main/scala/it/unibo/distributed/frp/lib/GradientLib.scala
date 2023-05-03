@@ -60,4 +60,4 @@ trait GradientLib:
   def distanceBetweenWithShare(source: Flow[Boolean], destination: Flow[Boolean]): Flow[Double] =
     broadcastWithShare(destination, gradient(source))
   def distanceBetween(source: Flow[Boolean], destination: Flow[Boolean]): Flow[Double] =
-    broadcast(destination, gradient(source))
+    broadcast(source, gradient(destination))

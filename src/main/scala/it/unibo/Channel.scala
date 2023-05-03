@@ -16,7 +16,9 @@ class Channel extends ProgramFactory:
         gradient(source),
         gradient(destination),
         distanceBetween(source, destination)
-      )((source, destination, distanceBetween) => source + destination <= (distanceBetween + width))
+      )((source, destination, distanceBetween) =>
+        !((source + destination).isInfinite && distanceBetween.isInfinite) && source + destination <= distanceBetween + width
+      )
 
 //    channel(sensor[Boolean]("source"), sensor[Boolean]("destination"), 3.0)
     val src = sensor[Boolean]("source")
