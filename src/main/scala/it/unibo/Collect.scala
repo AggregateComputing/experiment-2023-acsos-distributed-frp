@@ -13,5 +13,3 @@ class Collect extends ProgramFactory:
 
     val potential = gradient(mid.map(_ == 1))
     collect[Double](potential, _ + _, 1, constant(0)).adapt(incarnation)
-
-//.map(x => (x * 100).round / 100.0)

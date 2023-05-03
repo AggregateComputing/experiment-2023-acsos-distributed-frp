@@ -1,4 +1,4 @@
-incarnation: protelis
+incarnation: scafi
 
 variables:
   seed: &seed
@@ -25,13 +25,10 @@ _program: &program
     # Loading the code as a module within Alchemist
     # In order to run this example, make sure that src/main/protelis is part of
     # your classpath (the Gradle script is already properly configured).
-    program: >
-      import protelis:coord:spreading
-      let result = if(env.get("obstacle")) { -1 } else { distanceTo(env.get("source")) }
-      env.put("root", result)
-      env.put("ticks", env.get("ticks") + 1)
-      result
-
+    type: Event
+    actions:
+      - type: RunScafiProgram
+        parameters: [ it.unibo.ScafiGradient, 1.0 ]
   - program: send
 environment:
   type: Continuous2DEnvironment

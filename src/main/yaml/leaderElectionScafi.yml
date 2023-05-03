@@ -1,25 +1,21 @@
-incarnation: protelis
+incarnation: scafi
 
 variables:
   seed: &seed
     min: 0
-    max: 1
+    max: 16
     step: 1
     default: 0
   spacing: &spacing
     type: ArbitraryVariable
-    parameters: [0.5, [0.25, 0.5]]
+    parameters: [0.5, [0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.1, 0.2]]
+    parameters: [0.1, [0.1]]
 
 seeds:
   scenario: *seed
   simulation: *seed
-
-environment:
-  type: Continuous2DEnvironment
-  parameters: []
 
 _program: &program
   - time-distribution: 1
@@ -29,13 +25,14 @@ _program: &program
     # Loading the code as a module within Alchemist
     # In order to run this example, make sure that src/main/protelis is part of
     # your classpath (the Gradle script is already properly configured).
-    program: >
-      import protelis:coord:spreading
-      let result = if(env.get("obstacle")) { false } else { channel(env.get("source"), env.get("destination"), 0.1) }
-      env.put("root", result)
-      result
-
+    type: Event
+    actions:
+      - type: RunScafiProgram
+        parameters: [ it.unibo.ScafiLeaderElection, 1.0 ]
   - program: send
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
 
 network-model:
   type: ConnectWithinDistance
@@ -48,8 +45,8 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
-    - molecule: destination
-      concentration: false
+    - molecule: ticks
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]
@@ -57,12 +54,27 @@ deployments:
       concentration: true
     - in:
         type: Rectangle
-        parameters: [ 3, 3, 3, 3 ]
-      molecule: destination
-      concentration: true
-    - in:
-        type: Rectangle
-        parameters: [ -4, -1, 8, 2 ]
+        parameters: [ -6, -1, 8, 2 ]
       molecule: obstacle
       concentration: true
+
   programs: *program
+
+export:
+    - type: CSVExporter
+      parameters:
+        exportPath: "data/proactive"
+        fileNameRoot: "gradient"
+        interval: 1.0
+      data:
+        - time
+        - molecule: "root"
+          aggregators: [ mean ]
+          value-filter: onlyfinite
+        - molecule: "ticks"
+          aggregators: [ sum ]
+          value-filter: onlyfinite
+
+terminate:
+  - type: AfterTime
+    parameters: 100.0

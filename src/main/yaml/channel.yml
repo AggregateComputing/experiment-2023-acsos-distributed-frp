@@ -1,4 +1,4 @@
-incarnation: protelis
+incarnation: scafi
 
 variables:
   seed: &seed
@@ -21,7 +21,9 @@ environment:
   type: Continuous2DEnvironment
   parameters: []
   global-programs:
-    - time-distribution: 1
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 0, 1 ]
       type: InitFrpGlobalReaction
       parameters: [ "it.unibo.Channel" ]
     - time-distribution: 1
@@ -40,7 +42,7 @@ deployments:
     - molecule: obstacle
       concentration: false
     - molecule: ticks
-      concentration: 0
+      concentration: 0.0
     - molecule: destination
       concentration: false
     - in:

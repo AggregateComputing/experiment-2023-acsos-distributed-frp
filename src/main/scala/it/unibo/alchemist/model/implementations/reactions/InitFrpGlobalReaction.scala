@@ -33,11 +33,13 @@ class InitFrpGlobalReaction[P <: Position[P]](
           context.node.setConcentration(Molecules.Root, v.root)
           context.node.setConcentration(Molecules.Export, v)
           // TODO: perhaps we should add more "randomness" to the sending time
+          val nextTime =
+            if (environment.getSimulation.getTime.toDouble == 0.0)
+              DoubleTime(randomGenerator.nextDouble() * 1 / getTimeDistribution.getRate)
+            else
+              environment.getSimulation.getTime
           val copied =
-            getTimeDistribution.cloneOnNewNode(
-              context.node,
-              environment.getSimulation.getTime.plus(DoubleTime(distribution.getRate))
-            )
+            getTimeDistribution.cloneOnNewNode(context.node, nextTime)
           val event = new Event(context.node, copied)
           context.node.getReactions.asScala.toList.foreach { reaction =>
             context.node.removeReaction(reaction)

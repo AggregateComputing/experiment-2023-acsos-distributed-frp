@@ -1,4 +1,4 @@
-incarnation: protelis
+incarnation: scafi
 
 variables:
   seed: &seed
@@ -26,7 +26,9 @@ environment:
         parameters: [ 0, 1 ]
       type: InitFrpGlobalReaction
       parameters: [ "it.unibo.Gradient" ]
-    - time-distribution: 1
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 1, 1 ]
       type: HeartBeat
       parameters: [ ]
 network-model:
