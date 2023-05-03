@@ -1,7 +1,7 @@
 [
   {
     "type": "class it.unibo.alchemist.boundary.gui.effects.DrawShape",
-    "curIncarnation": "protelis",
+    "curIncarnation": "scafi",
     "mode": "FILL_ELLIPSE",
     "red": {
       "max": 255,
@@ -61,7 +61,7 @@
   },
   {
     "type": "class it.unibo.alchemist.boundary.gui.effects.DrawShape",
-    "curIncarnation": "protelis",
+    "curIncarnation": "scafi",
     "mode": "FILL_ELLIPSE",
     "red": {
       "max": 255,
@@ -121,7 +121,7 @@
   },
   {
     "type": "class it.unibo.alchemist.boundary.gui.effects.DrawShape",
-    "curIncarnation": "protelis",
+    "curIncarnation": "scafi",
     "mode": "FILL_ELLIPSE",
     "red": {
       "max": 255,
@@ -181,7 +181,7 @@
   },
   {
     "type": "class it.unibo.alchemist.boundary.gui.effects.DrawShape",
-    "curIncarnation": "protelis",
+    "curIncarnation": "scafi",
     "mode": "FILL_ELLIPSE",
     "red": {
       "max": 255,
@@ -241,7 +241,7 @@
   },
   {
     "type": "class it.unibo.alchemist.boundary.gui.effects.DrawShape",
-    "curIncarnation": "protelis",
+    "curIncarnation": "scafi",
     "mode": "FILL_ELLIPSE",
     "red": {
       "max": 255,
