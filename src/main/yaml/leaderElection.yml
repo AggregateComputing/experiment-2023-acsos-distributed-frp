@@ -3,15 +3,15 @@ incarnation: scafi
 variables:
   seed: &seed
     min: 0
-    max: 1
+    max: 16
     step: 1
     default: 0
   spacing: &spacing
     type: ArbitraryVariable
-    parameters: [0.5, [0.25, 0.5]]
+    parameters: [0.5, [0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.1, 0.2]]
+    parameters: [0.1, [0.1]]
 
 seeds:
   scenario: *seed
@@ -21,7 +21,9 @@ environment:
   type: Continuous2DEnvironment
   parameters: []
   global-programs:
-    - time-distribution: 1
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 0, 1 ]
       type: InitFrpGlobalReaction
       parameters: [ "it.unibo.LeaderElection" ]
     - time-distribution: 1
@@ -42,13 +44,13 @@ deployments:
 export:
   - type: CSVExporter
     parameters:
-      exportPath: "data/reactive"
-      fileNameRoot: "leader"
+      exportPath: "data"
+      fileNameRoot: "leader_reactive"
       interval: 1.0
     data:
       - time
       - molecule: "root"
-        aggregators: [ mean ]
+        aggregators: [ sum ]
         value-filter: onlyfinite
       - molecule: "ticks"
         aggregators: [ sum ]

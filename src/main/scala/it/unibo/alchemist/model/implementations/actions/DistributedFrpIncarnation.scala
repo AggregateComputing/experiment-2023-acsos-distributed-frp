@@ -73,10 +73,10 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
       }
 
   extension (context: Context)
-    def storeTicks(): Unit = if context.node.contains(Molecules.Ticks) then
-      val ticks = context.node.getConcentration(Molecules.Ticks).asInstanceOf[Double]
-      context.node.setConcentration(Molecules.Ticks, ticks + 1.0)
-    else context.node.setConcentration(Molecules.Ticks, 0.0)
+    def storeTicks(): Unit = if context.node.contains(Molecules.Rounds) then
+      val ticks = context.node.getConcentration(Molecules.Rounds).asInstanceOf[Double]
+      context.node.setConcentration(Molecules.Rounds, ticks + 1.0)
+    else context.node.setConcentration(Molecules.Rounds, 0.0)
 object DistributedFrpIncarnation:
   type FrpContext = DistributedFrpIncarnation[_]#Context
   type Export[A] = DistributedFrpIncarnation[_]#Export[A]

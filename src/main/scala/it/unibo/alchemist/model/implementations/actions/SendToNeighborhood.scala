@@ -19,6 +19,7 @@ class SendToNeighborhood[P <: Position[P]](
     val received = (node :: neighborhood).map { node =>
       node.getId -> node.getConcentration(Molecules.Export).asInstanceOf[Export[Any]]
     }.toMap
+
     node.getConcentration(Molecules.Context).asInstanceOf[FrpContext].receiveWholeExports(received)
     /*(node :: neighborhood).foreach { n =>
       n.getConcentration(Molecules.Context)

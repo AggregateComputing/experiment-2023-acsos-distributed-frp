@@ -8,4 +8,4 @@ object Molecules:
   val Root = SimpleMolecule("root")
   val Export = SimpleMolecule("export")
   val TimeDifference = SimpleMolecule("timeDiff")
-  val Ticks = SimpleMolecule("ticks")
+  val Rounds = SimpleMolecule("rounds")

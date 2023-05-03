@@ -11,8 +11,10 @@ variables:
     parameters: [0.5, [0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.2]]
-
+    parameters: [0.1, [0.1]]
+  reactive: &reactive
+    type: ArbitraryVariable
+    parameters: [ 1.0, [ 1.0 ]]
 seeds:
   scenario: *seed
   simulation: *seed
@@ -28,7 +30,7 @@ environment:
       parameters: [ "it.unibo.Gradient" ]
     - time-distribution:
         type: DiracComb
-        parameters: [ 1, 1 ]
+        parameters: [ 0.001, 1 ]
       type: HeartBeat
       parameters: [ ]
 network-model:
@@ -55,7 +57,7 @@ deployments:
 export:
   - type: CSVExporter
     parameters:
-      exportPath: "data/reactive"
+      exportPath: "data"
       fileNameRoot: "gradient"
       interval: 1.0
     data:
@@ -63,7 +65,7 @@ export:
       - molecule: "root"
         aggregators: [ mean ]
         value-filter: onlyfinite
-      - molecule: "ticks"
+      - molecule: "rounds"
         aggregators: [ sum ]
         value-filter: onlyfinite
 

@@ -12,7 +12,9 @@ variables:
   error: &error
     type: ArbitraryVariable
     parameters: [0.1, [0.1]]
-
+  reactive: &reactive
+    type: ArbitraryVariable
+    parameters: [ 0.0, [ 0.0 ]]
 seeds:
   scenario: *seed
   simulation: *seed
@@ -45,7 +47,7 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
-    - molecule: ticks
+    - molecule: rounds
       concentration: 0.0
     - in:
         type: Rectangle
@@ -63,7 +65,7 @@ deployments:
 export:
     - type: CSVExporter
       parameters:
-        exportPath: "data/proactive"
+        exportPath: "data"
         fileNameRoot: "gradient"
         interval: 1.0
       data:
@@ -71,7 +73,7 @@ export:
         - molecule: "root"
           aggregators: [ mean ]
           value-filter: onlyfinite
-        - molecule: "ticks"
+        - molecule: "rounds"
           aggregators: [ sum ]
           value-filter: onlyfinite
 

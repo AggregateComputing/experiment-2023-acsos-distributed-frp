@@ -33,13 +33,18 @@ class InitFrpGlobalReaction[P <: Position[P]](
           context.node.setConcentration(Molecules.Root, v.root)
           context.node.setConcentration(Molecules.Export, v)
           // TODO: perhaps we should add more "randomness" to the sending time
+          val oldReaction = context.node.getReactions.asScala.toList.headOption
           val nextTime =
-            if (environment.getSimulation.getTime.toDouble == 0.0)
-              DoubleTime(randomGenerator.nextDouble() * 1 / getTimeDistribution.getRate)
-            else
-              environment.getSimulation.getTime
-          val copied =
-            getTimeDistribution.cloneOnNewNode(context.node, nextTime)
+            oldReaction
+              .map(_.getTimeDistribution.getNextOccurence)
+              .getOrElse(
+                DoubleTime(
+                  randomGenerator.nextDouble() * 1 / getTimeDistribution.getRate
+                )
+              )
+
+          val copied = getTimeDistribution.cloneOnNewNode(context.node, environment.getSimulation.getTime)
+          copied.update(nextTime, true, copied.getRate, environment)
           val event = new Event(context.node, copied)
           context.node.getReactions.asScala.toList.foreach { reaction =>
             context.node.removeReaction(reaction)
@@ -47,7 +52,7 @@ class InitFrpGlobalReaction[P <: Position[P]](
           }
           context.storeTicks()
           event.setActions(JList.of(SendToNeighborhood(context.node, environment, v)))
-          context.node.addReaction(event)
           environment.getSimulation.reactionAdded(event)
+          context.node.addReaction(event)
         }
     distribution.update(Time.INFINITY, true, getRate, environment) // as it removes the current reaction
