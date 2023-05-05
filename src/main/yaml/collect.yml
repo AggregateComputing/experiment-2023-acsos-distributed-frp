@@ -14,8 +14,10 @@ variables:
     parameters: [0.1, [0.1, 0.2]]
   reactive: &reactive
     type: ArbitraryVariable
-    parameters: [0.0, [0.0]
-
+    parameters: [0.0, [0.0]]
+  
+  prototype: &prototype
+    formula: new it.unibo.adapter.DiracComb(1.0);
 seeds:
   scenario: *seed
   simulation: *seed
@@ -28,7 +30,7 @@ environment:
         type: DiracComb
         parameters: [ 0, 1 ]
       type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.Collect" ]
+      parameters: [ "it.unibo.Collect", *prototype ]
     - time-distribution: 1
       type: HeartBeat
       parameters: [ ]
@@ -43,6 +45,8 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
+    - molecule: messages
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]

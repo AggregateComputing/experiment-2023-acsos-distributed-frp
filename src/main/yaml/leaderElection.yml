@@ -12,6 +12,8 @@ variables:
   error: &error
     type: ArbitraryVariable
     parameters: [0.1, [0.1]]
+  prototype: &prototype
+    formula: new it.unibo.adapter.DiracComb(1.0);
 
 seeds:
   scenario: *seed
@@ -25,7 +27,7 @@ environment:
         type: DiracComb
         parameters: [ 0, 1 ]
       type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.LeaderElection" ]
+      parameters: [ "it.unibo.LeaderElection", *prototype ]
     - time-distribution: 1
       type: HeartBeat
       parameters: [ ]
@@ -40,6 +42,8 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
+    - molecule: messages
+      concentration: 0.0
 
 export:
   - type: CSVExporter

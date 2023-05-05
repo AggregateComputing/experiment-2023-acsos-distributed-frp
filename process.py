@@ -179,7 +179,7 @@ def beautifyValue(v):
 if __name__ == '__main__':
     # CONFIGURE SCRIPT
     # Where to find Alchemist data files
-    directory = 'data/reactive'
+    directory = 'data'
     # Where to save charts
     output_directory = 'charts'
     # How to name the summary of the processed data
@@ -188,14 +188,14 @@ if __name__ == '__main__':
     experiments = ['gradient']
     floatPrecision = '{: 0.3f}'
     # Number of time samples 
-    timeSamples = 100
+    timeSamples = 50
     # time management
     minTime = 0
     maxTime = 100
     timeColumnName = 'time'
     logarithmicTime = False
     # One or more variables are considered random and "flattened"
-    seedVars = ['seed', 'longseed']
+    seedVars = ['seed', 'longseed', "spacing", "error"]
     # Label mapping
     class Measure:
         def __init__(self, description, unit = None):
@@ -233,6 +233,7 @@ if __name__ == '__main__':
     labels = {
         'root[mean]': Measure(r'output'),
         'ticks[sum]': Measure(r'ticks', 'count'),
+        'message[sum]': Measure("messages", "count")
     }
     def derivativeOrMeasure(variable_name):
         if variable_name.endswith('dt'):
@@ -311,7 +312,7 @@ if __name__ == '__main__':
                     timeline = timefun(minTime, maxTime, timeSamples)
                     # Resample
                     for file in allData:
-    #                    print(file)
+                        print(file)
                         allData[file] = convert(timeColumn, timeline, allData[file])
                     # Populate the dataset
                     for file, data in allData.items():
@@ -350,6 +351,8 @@ if __name__ == '__main__':
 #        ax.set_xlim(min(xdata), max(xdata))
         index = 0
         for (label, (data, error)) in ydata.items():
+            print(xdata)
+            print(data)
 #            print(f'plotting {data}\nagainst {xdata}')
             lines = ax.plot(xdata, data, label=label, color=colors(index / (len(ydata) - 1)) if colors else None, linewidth=linewidth)
             index += 1

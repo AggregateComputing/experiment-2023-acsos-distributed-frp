@@ -12,7 +12,8 @@ variables:
   error: &error
     type: ArbitraryVariable
     parameters: [0.1, [0.1, 0.2]]
-
+  prototype: &prototype
+    formula: new it.unibo.adapter.DiracComb(1.0);
 seeds:
   scenario: *seed
   simulation: *seed
@@ -22,10 +23,10 @@ environment:
   parameters: []
   global-programs:
     - time-distribution:
-        type: DiracComb
-        parameters: [ 0, 1 ]
+        type: Trigger
+        parameters: [ 0 ]
       type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.Channel" ]
+      parameters: ["it.unibo.Channel", *prototype, "reactive"]
     - time-distribution:
         type: DiracComb
         parameters: [ 1, 1 ]
@@ -47,6 +48,8 @@ deployments:
       concentration: 0.0
     - molecule: destination
       concentration: false
+    - molecule: messages
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]

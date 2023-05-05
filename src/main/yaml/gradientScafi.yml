@@ -12,9 +12,12 @@ variables:
   error: &error
     type: ArbitraryVariable
     parameters: [0.1, [0.1]]
-  reactive: &reactive
+  mode: &mode
     type: ArbitraryVariable
-    parameters: [ 0.0, [ 0.0 ]]
+    parameters: [ "proactive", [ "proactive" ]]
+  delay: &delay
+    type: ArbitraryVariable
+    parameters: [ 1, [ 1 ] ]
 seeds:
   scenario: *seed
   simulation: *seed
@@ -43,6 +46,8 @@ deployments:
       concentration: false
     - molecule: rounds
       concentration: 0.0
+    - molecule: messages
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]
@@ -68,6 +73,9 @@ export:
           aggregators: [ mean ]
           value-filter: onlyfinite
         - molecule: "rounds"
+          aggregators: [ sum ]
+          value-filter: onlyfinite
+        - molecule: "messages"
           aggregators: [ sum ]
           value-filter: onlyfinite
 

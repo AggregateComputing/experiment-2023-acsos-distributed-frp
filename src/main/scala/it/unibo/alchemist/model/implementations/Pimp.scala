@@ -13,3 +13,6 @@ object PimpAlchemist:
       val sink = IncrementalCellSink(node.getConcentration(molecule))
       node.setConcentration(SimpleMolecule(molecule.getName + "-sink"), sink)
       sink
+
+    def updateConcentration[A](molecule: Molecule, logic: A => A): Unit =
+      node.setConcentration(molecule, logic(node.getConcentration(molecule).asInstanceOf[A]))

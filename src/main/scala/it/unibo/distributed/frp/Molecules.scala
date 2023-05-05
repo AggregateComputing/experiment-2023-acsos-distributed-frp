@@ -9,3 +9,4 @@ object Molecules:
   val Export = SimpleMolecule("export")
   val TimeDifference = SimpleMolecule("timeDiff")
   val Rounds = SimpleMolecule("rounds")
+  val MessagesSent = SimpleMolecule("messages")

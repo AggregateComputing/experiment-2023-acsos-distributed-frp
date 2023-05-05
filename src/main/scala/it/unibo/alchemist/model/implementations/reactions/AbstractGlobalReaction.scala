@@ -29,7 +29,8 @@ trait AbstractGlobalReaction[P <: Position[P]] extends GlobalReaction[Any]:
 
   override def getTimeDistribution: TimeDistribution[Any] = distribution
 
-  override def canExecute: Boolean = true // todo
+  override def canExecute: Boolean =
+    !getTimeDistribution.getNextOccurence.isInfinite // todo
 
   override def initializationComplete(time: Time, environment: Environment[Any, _]): Unit = {}
 

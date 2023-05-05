@@ -41,6 +41,8 @@ deployments:
       concentration: false
     - molecule: rounds
       concentration: 0.0
+    - molecule: messages
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]

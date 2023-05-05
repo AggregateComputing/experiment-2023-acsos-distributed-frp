@@ -12,9 +12,14 @@ variables:
   error: &error
     type: ArbitraryVariable
     parameters: [0.1, [0.1]]
-  reactive: &reactive
+  mode: &mode
     type: ArbitraryVariable
-    parameters: [ 1.0, [ 1.0 ]]
+    parameters: [ "reactive", [ "throttle", "reactive" ]]
+  delay: &delay
+    type: GeometricVariable
+    parameters: [ 0.5, 0.2, 2, 5]
+  prototype: &prototype
+    formula: new it.unibo.adapter.DiracComb(delay);
 seeds:
   scenario: *seed
   simulation: *seed
@@ -24,10 +29,10 @@ environment:
   parameters: []
   global-programs:
     - time-distribution:
-        type: DiracComb
-        parameters: [ 0, 1 ]
+        type: Trigger
+        parameters: [ 0 ]
       type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.Gradient" ]
+      parameters: [ "it.unibo.Gradient", *prototype, *mode ]
     - time-distribution:
         type: DiracComb
         parameters: [ 0.001, 1 ]
@@ -44,6 +49,8 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
+    - molecule: messages
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]
@@ -66,6 +73,9 @@ export:
         aggregators: [ mean ]
         value-filter: onlyfinite
       - molecule: "rounds"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+      - molecule: "messages"
         aggregators: [ sum ]
         value-filter: onlyfinite
 

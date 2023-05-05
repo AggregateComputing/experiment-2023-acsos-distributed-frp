@@ -27,7 +27,11 @@ _program: &program
     actions:
       - type: RunScafiProgram
         parameters: [ it.unibo.ScafiChannel, 1.0 ]
-  - program: send
+  - time-distribution:
+      type: ExponentialTime
+      parameters: [ 10 ]
+    program: send
+
 
 network-model:
   type: ConnectWithinDistance
@@ -44,6 +48,8 @@ deployments:
       concentration: 0.0
     - molecule: destination
       concentration: false
+    - molecule: messages
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]

@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.ProgramFactory
 import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnation.FrpContext
-import it.unibo.alchemist.model.implementations.actions.{DistributedFrpIncarnation, SendToNeighborhood}
+import it.unibo.alchemist.model.implementations.actions.{DistributedFrpIncarnation, SendToNeighbor}
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, Trigger}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
