@@ -11,5 +11,5 @@ class Collect extends ProgramFactory:
     import libs.*
     import libs.I.{given, *}
 
-    val potential = gradient(mid.map(_ == 1))
+    val potential = gradient(sensor[Boolean]("source"))
     collect[Double](potential, _ + _, 1, constant(0)).adapt(incarnation)

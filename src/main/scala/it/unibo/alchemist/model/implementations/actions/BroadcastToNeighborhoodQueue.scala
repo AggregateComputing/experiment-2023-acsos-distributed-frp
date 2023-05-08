@@ -4,10 +4,10 @@ import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnatio
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.*
 import it.unibo.distributed.frp.Molecules
-
+import it.unibo.alchemist.model.implementations.PimpAlchemist.*
 import _root_.scala.jdk.CollectionConverters.IteratorHasAsScala
 
-case class BroadcastToNeighborhood[P <: Position[P]](
+case class BroadcastToNeighborhoodQueue[P <: Position[P]](
     from: Node[Any],
     environment: Environment[Any, P],
     data: Export[Any]
@@ -17,8 +17,13 @@ case class BroadcastToNeighborhood[P <: Position[P]](
   override def execute(): Unit =
     val neighborhood = environment.getNeighborhood(from).getNeighbors.iterator().asScala.toList
     (from :: neighborhood).foreach { to =>
-      to.getConcentration(Molecules.Context)
-        .asInstanceOf[FrpContext]
-        .receiveExport(data, from)
+      to.updateConcentration[Map[Int, Export[Any]]](Molecules.ExportQueue, _ + (from.getId -> data))
     }
+    from.updateConcentration[Double](Molecules.MessagesSent, _ + neighborhood.size)
+    // Todo refactor
+    val reactions = from.getReactions.iterator().asScala
+    val findReaction = reactions.find(_.getActions.iterator().asScala.exists(_ == this))
+    environment.getSimulation.reactionRemoved(findReaction.get)
+    from.removeReaction(findReaction.get)
+
   override def getContext: Context = Context.NEIGHBORHOOD

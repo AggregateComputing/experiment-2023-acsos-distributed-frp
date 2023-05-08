@@ -8,16 +8,25 @@ variables:
     default: 0
   spacing: &spacing
     type: ArbitraryVariable
-    parameters: [0.5, [0.25, 0.5]]
+    parameters: [0.5, [0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.1, 0.2]]
-  reactive: &reactive
+    parameters: [0.1, [0.1]]
+  mode: &mode
     type: ArbitraryVariable
-    parameters: [0.0, [0.0]]
-  
-  prototype: &prototype
-    formula: new it.unibo.adapter.DiracComb(1.0);
+    parameters: [ "throttle", [ "throttle", "reactive" ]]
+  delay: &delay
+    type: ArbitraryVariable
+    parameters: [ 10, [ 10, 20 ] ]
+  throttle: &throttle
+    type: ArbitraryVariable
+    parameters: [ 1, [ 1, 2, 5, 8 ] ]
+  delayPrototype: &delayPrototype
+    formula: new it.unibo.adapter.Exponential(delay);
+
+  throttlePrototype: &throttlePrototype
+    formula: new it.unibo.adapter.DiracComb(throttle);
+
 seeds:
   scenario: *seed
   simulation: *seed
@@ -27,11 +36,13 @@ environment:
   parameters: []
   global-programs:
     - time-distribution:
-        type: DiracComb
-        parameters: [ 0, 1 ]
+        type: Trigger
+        parameters: [ 0 ]
       type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.Collect", *prototype ]
-    - time-distribution: 1
+      parameters: [ "it.unibo.Collect", [*delayPrototype, *throttlePrototype], *mode ]
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 0.001, 1 ]
       type: HeartBeat
       parameters: [ ]
 network-model:
@@ -52,12 +63,6 @@ deployments:
         parameters: [ -6, -6, 2, 2 ]
       molecule: source
       concentration: true
-    - in:
-        type: Rectangle
-        parameters: [ -6, -1, 8, 2 ]
-      molecule: obstacle
-      concentration: true
-
 export:
   - type: CSVExporter
     parameters:
@@ -72,7 +77,9 @@ export:
       - molecule: "rounds"
         aggregators: [ sum ]
         value-filter: onlyfinite
-
+      - molecule: "messages"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
 
 terminate:
   - type: AfterTime

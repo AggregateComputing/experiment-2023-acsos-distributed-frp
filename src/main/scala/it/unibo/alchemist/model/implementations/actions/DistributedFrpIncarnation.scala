@@ -3,10 +3,10 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position}
 import it.unibo.distributed.frp.Molecules
-import it.unibo.distributedfrp.core.Incarnation
+import it.unibo.distributedfrp.core.{ExportTree, Incarnation}
 import it.unibo.distributedfrp.frp.IncrementalCellSink
 import it.unibo.distributedfrp.simulation.{IncarnationWithEnvironment, TestLocalSensors, TestNeighborSensors}
-import nz.sodium.Cell
+import nz.sodium.{Cell, CellSink}
 import it.unibo.alchemist.model.implementations.PimpAlchemist.*
 import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnation.FrpContext
 import org.apache.commons.math3.random.RandomGenerator
@@ -32,7 +32,8 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
     molecules
       .tapEach(molecule => node.createSinkFromMolecule(molecule)) // create sinks for each molecule
       .foreach { molecule => // align molecule with sinks updates
-        node.getSinkFromMolecule(molecule).cell.listen(data => node.setConcentration(molecule, data))
+        val listen = node.getSinkFromMolecule(molecule).cell.listenWeak(data => node.setConcentration(molecule, data))
+        node.setConcentration(SimpleMolecule(s"listen-$molecule"), listen)
       }
     private val neighborsSink = new IncrementalCellSink[Map[DeviceId, NeighborState]](Map.empty, calm = true)
 
@@ -72,6 +73,21 @@ class DistributedFrpIncarnation[P <: Position[P]](environment: Environment[Any, 
         data
       }
 
+    def tap(f: A => Unit): Flow[A] =
+      map(flow) { data =>
+        f(data)
+        data
+      }
+
+    def tapEachWithNode(f: (A, Node[Any]) => Unit): Flow[A] =
+      val id = mid.map(environment.getNodeByID)
+      lift(id, flow) { (node, data) =>
+        f(data, node)
+        data
+      }
+
+    def logComputedTimes(name: String): Flow[A] =
+      flow.tapEachWithNode((_, node) => node.evaluated(name))
   extension (context: Context)
     def storeTicks(): Unit = if context.node.contains(Molecules.Rounds) then
       val ticks = context.node.getConcentration(Molecules.Rounds).asInstanceOf[Double]

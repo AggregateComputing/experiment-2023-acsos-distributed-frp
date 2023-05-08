@@ -22,8 +22,8 @@ trait LeaderElectionLib[P <: Position[P]]:
   def breakingUsingUids(uid: Flow[(Double, DeviceId)], grain: Flow[Double]): Flow[Boolean] =
     val currentLead = loop((Double.PositiveInfinity, -1)) { lead =>
       val realLead = lift(uid, lead) { case (me, other) => if (other._2 == -1) me else other }
-      val distance = gradient(lift(uid, lead)(_ == _))
-      distanceCompetition(distance, lead, uid, grain)
+      val distance = gradient(lift(uid, realLead)(_ == _))
+      distanceCompetition(distance, realLead, uid, grain)
     }
     lift(uid, currentLead)(_ == _)
 

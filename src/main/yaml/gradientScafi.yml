@@ -17,18 +17,24 @@ variables:
     parameters: [ "proactive", [ "proactive" ]]
   delay: &delay
     type: ArbitraryVariable
-    parameters: [ 1, [ 1 ] ]
+    parameters: [ 10, [ 10, 20 ] ]
+  throttle: &throttle
+    type: ArbitraryVariable
+    parameters: [ 1, [ 1, 2, 5, 8 ] ]
 seeds:
   scenario: *seed
   simulation: *seed
 
 _program: &program
-  - time-distribution: 1
+  - time-distribution: *throttle
     type: Event
     actions:
       - type: RunScafiProgram
-        parameters: [ it.unibo.ScafiGradient, 1.0 ]
-  - program: send
+        parameters: [ it.unibo.ScafiGradient, 2.0 ]
+  - time-distribution:
+      type: ExponentialTime
+      parameters: [ *delay ]
+    program: send
 environment:
   type: Continuous2DEnvironment
   parameters: []

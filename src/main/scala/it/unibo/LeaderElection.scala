@@ -13,7 +13,7 @@ class LeaderElection extends ProgramFactory:
 
     leaderElection(constant(3))
       .map(data =>
-        if (data) { 1 }
+        if (data) { 10 }
         else { 0 }
       )
       .adapt(incarnation)

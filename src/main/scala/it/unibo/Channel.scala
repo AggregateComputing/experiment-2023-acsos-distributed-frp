@@ -13,9 +13,9 @@ class Channel extends ProgramFactory:
 
     def channel(source: Flow[Boolean], destination: Flow[Boolean], width: Double): Flow[Boolean] =
       lift(
-        gradient(source),
-        gradient(destination),
-        distanceBetween(source, destination)
+        gradient(source).logComputedTimes("source_gradient"),
+        gradient(destination).logComputedTimes("destination_gradient"),
+        distanceBetween(source, destination).logComputedTimes("distance_between")
       )((source, destination, distanceBetween) =>
         !((source + destination).isInfinite && distanceBetween.isInfinite) && source + destination <= distanceBetween + width
       )
@@ -28,5 +28,9 @@ class Channel extends ProgramFactory:
       constant(false)
     } {
       channel(src, dst, 0.1)
-    }.adapt(incarnation)
-//.map(x => (x * 100).round / 100.0)
+    }
+      .map {
+        if _ then { 10 }
+        else { 0.0 }
+      }
+      .adapt(incarnation)

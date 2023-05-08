@@ -8,11 +8,19 @@ variables:
     default: 0
   spacing: &spacing
     type: ArbitraryVariable
-    parameters: [0.5, [0.25, 0.5]]
+    parameters: [0.5, [0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.1, 0.2]]
-
+    parameters: [0.1, [0.1]]
+  mode: &mode
+    type: ArbitraryVariable
+    parameters: [ "proactive", [ "proactive" ] ]
+  delay: &delay
+    type: ArbitraryVariable
+    parameters: [ 10, [ 10, 20 ] ]
+  throttle: &throttle
+    type: ArbitraryVariable
+    parameters: [ 1, [ 1, 2, 5, 8 ] ]
 seeds:
   scenario: *seed
   simulation: *seed
@@ -22,16 +30,15 @@ environment:
   parameters: []
 
 _program: &program
-  - time-distribution: 1
+  - time-distribution: *throttle
     type: Event
     actions:
       - type: RunScafiProgram
-        parameters: [ it.unibo.ScafiChannel, 1.0 ]
+        parameters: [ it.unibo.ScafiChannel, 2.0 ]
   - time-distribution:
       type: ExponentialTime
-      parameters: [ 10 ]
+      parameters: [ *delay ]
     program: send
-
 
 network-model:
   type: ConnectWithinDistance
@@ -81,8 +88,10 @@ export:
       - molecule: "rounds"
         aggregators: [ sum ]
         value-filter: onlyfinite
-
+      - molecule: "messages"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
 
 terminate:
   - type: AfterTime
-    parameters: 100.0
+    parameters: 200.0

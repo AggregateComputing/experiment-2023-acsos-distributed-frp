@@ -12,14 +12,22 @@ variables:
   error: &error
     type: ArbitraryVariable
     parameters: [0.1, [0.1]]
+
   mode: &mode
     type: ArbitraryVariable
-    parameters: [ "reactive", [ "throttle", "reactive" ]]
+    parameters: ["throttle", ["throttle", "reactive"]]
   delay: &delay
-    type: GeometricVariable
-    parameters: [ 0.5, 0.2, 2, 5]
-  prototype: &prototype
-    formula: new it.unibo.adapter.DiracComb(delay);
+    type: ArbitraryVariable
+    parameters: [ 10, [ 10, 20 ] ]
+  throttle: &throttle
+    type: ArbitraryVariable
+    parameters: [ 1, [ 1, 2, 5, 8 ] ]
+  delayPrototype: &delayPrototype
+    formula: new it.unibo.adapter.Exponential(delay);
+
+  throttlePrototype: &throttlePrototype
+    formula: new it.unibo.adapter.DiracComb(throttle);
+
 seeds:
   scenario: *seed
   simulation: *seed
@@ -32,7 +40,7 @@ environment:
         type: Trigger
         parameters: [ 0 ]
       type: InitFrpGlobalReaction
-      parameters: [ "it.unibo.Gradient", *prototype, *mode ]
+      parameters: [ "it.unibo.Gradient", [*delayPrototype, *throttlePrototype], *mode ]
     - time-distribution:
         type: DiracComb
         parameters: [ 0.001, 1 ]

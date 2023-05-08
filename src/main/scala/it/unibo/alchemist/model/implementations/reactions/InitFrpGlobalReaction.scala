@@ -15,8 +15,10 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.distributed.frp.Molecules
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.adapter.DistributionPrototype
-import it.unibo.alchemist.model.implementations.actions
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.model.implementations.{CleanListeners, actions}
 import it.unibo.alchemist.model.implementations.actions.DistributedFrpIncarnation.{Export, FrpContext}
+import nz.sodium.Listener
 
 import java.util.List as JList
 class InitFrpGlobalReaction[P <: Position[P]](
@@ -24,7 +26,7 @@ class InitFrpGlobalReaction[P <: Position[P]](
     val randomGenerator: RandomGenerator,
     val distribution: TimeDistribution[Any],
     val programFactory: String,
-    val prototype: DistributionPrototype,
+    val prototype: java.util.List[DistributionPrototype],
     val mode: String = "throttle"
 ) extends AbstractGlobalReaction[P]:
 
@@ -33,7 +35,7 @@ class InitFrpGlobalReaction[P <: Position[P]](
       randomGenerator: RandomGenerator,
       distribution: TimeDistribution[Any],
       programFactory: String,
-      prototype: DistributionPrototype
+      prototype: java.util.List[DistributionPrototype]
   ) = this(environment, randomGenerator, distribution, programFactory, prototype, "throttle")
   private var fired = false
   private val factory =
@@ -45,49 +47,51 @@ class InitFrpGlobalReaction[P <: Position[P]](
   override def execute(): Unit =
     val program = factory.create(globalIncarnation)
     val contexts = environment.getNodes.asScala.toList.map(node => globalIncarnation.context(node.getId))
-    for context <- contexts do
-      program
+
+    val listeners = for
+      context <- contexts
+      listener = program
         .run(Seq.empty)(using context)
         .listen { v =>
-          val nextTime = if (fired) environment.getSimulation.getTime else prototype.randomInit(randomGenerator)
-          mode.on("throttle").perform(throttling(context, nextTime))
+          val nextTime = if (fired) environment.getSimulation.getTime else prototype.get(0).randomInit(randomGenerator)
+          mode.on("throttle").perform(throttling(context, nextTime, v))
           mode.on("reactive").perform(reactive(context, nextTime, v))
           context.storeTicks()
           context.node.setConcentration(Molecules.LastComputationTime, environment.getSimulation.getTime.toDouble)
           context.node.setConcentration(Molecules.Root, v.root)
           context.node.setConcentration(Molecules.Export, v)
         }
+    yield listener
+    environment.getSimulation.addOutputMonitor(CleanListeners[P](listeners))
     fired = true
     distribution.update(Time.INFINITY, true, getRate, environment) // as it removes the current reaction
 
-  private def throttling(context: FrpContext, nextTime: Time): Unit =
-    val neighbor = environment.getNeighborhood(context.node).getNeighbors.size()
+  private def throttling(
+      context: globalIncarnation.SimulationContext,
+      nextTime: Time,
+      exportMessage: Export[Any]
+  ): Unit =
     if (!fired) {
-      val fire = prototype.adapt[Any](nextTime, randomGenerator)
+      context.node.setConcentration(Molecules.ExportQueue, Map.empty[Int, Export[Any]])
+      val fire = prototype.get(1).adapt[Any](nextTime, randomGenerator)
       fire.update(nextTime, true, fire.getRate, environment)
       val event = new Event(context.node, fire)
       event.setActions(JList.of(ThrottleNeighborhoodMessages(context.node, environment)))
       environment.getSimulation.reactionAdded(event)
-    } else {
-      context.node.updateConcentration[Double](Molecules.MessagesSent, _ + neighbor)
     }
-
-  private def reactive(context: FrpContext, nextTime: Time, exportMessage: Export[Any]): Unit =
-    /*if (context.node.getConcentration(Molecules.Export) != exportMessage) { // avoid to send the same message twice
-      val neighborhood = context.node :: environment.getNeighborhood(context.node).asScala.toList
-      neighborhood.foreach { to =>
-        val fire = prototype.adapt[Any](nextTime, randomGenerator)
-        fire.update(nextTime, true, fire.getRate, environment)
-        val trigger = Trigger[Any](fire.getNextOccurence)
-        trigger.update(fire.getNextOccurence, true, 0.0, environment)
-        val event = new Event(to, trigger)
-        event.setActions(JList.of(actions.SendToNeighbor(to, environment, (context.node, exportMessage))))
-        to.addReaction(event)
-        environment.getSimulation.reactionAdded(event)
-      }
-    }*/
+    if (context.node.getConcentration(Molecules.Export) != exportMessage) { // avoid to send the same message twice
+      val fire = prototype.get(0).adapt[Any](nextTime, randomGenerator)
+      fire.update(nextTime, true, fire.getRate, environment)
+      val trigger = Trigger[Any](fire.getNextOccurence)
+      trigger.update(fire.getNextOccurence, true, 0.0, environment)
+      val event = new Event(context.node, trigger)
+      event.setActions(JList.of(actions.BroadcastToNeighborhoodQueue(context.node, environment, exportMessage)))
+      context.node.addReaction(event)
+      environment.getSimulation.reactionAdded(event)
+    }
+  private def reactive(context: globalIncarnation.SimulationContext, nextTime: Time, exportMessage: Export[Any]): Unit =
     val neighbor = environment.getNeighborhood(context.node).getNeighbors.size()
-    val fire = prototype.adapt[Any](nextTime, randomGenerator)
+    val fire = prototype.get(0).adapt[Any](nextTime, randomGenerator)
     fire.update(nextTime, true, fire.getRate, environment)
     val trigger = Trigger[Any](fire.getNextOccurence)
     trigger.update(fire.getNextOccurence, true, 0.0, environment)

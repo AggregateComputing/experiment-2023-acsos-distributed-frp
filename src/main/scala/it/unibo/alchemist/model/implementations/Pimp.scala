@@ -16,3 +16,8 @@ object PimpAlchemist:
 
     def updateConcentration[A](molecule: Molecule, logic: A => A): Unit =
       node.setConcentration(molecule, logic(node.getConcentration(molecule).asInstanceOf[A]))
+    
+    def evaluated(what: String): Unit =
+      if(!node.contains(SimpleMolecule(what))) node.setConcentration(SimpleMolecule(what), 0)
+      node.updateConcentration[Int](SimpleMolecule(what), _ + 1)  
+    

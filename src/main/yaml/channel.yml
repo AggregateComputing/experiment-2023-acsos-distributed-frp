@@ -8,15 +8,28 @@ variables:
     default: 0
   spacing: &spacing
     type: ArbitraryVariable
-    parameters: [0.5, [0.25, 0.5]]
+    parameters: [0.5, [0.5]]
   error: &error
     type: ArbitraryVariable
-    parameters: [0.1, [0.1, 0.2]]
-  prototype: &prototype
-    formula: new it.unibo.adapter.DiracComb(1.0);
+    parameters: [0.1, [0.1]]
+  mode: &mode
+    type: ArbitraryVariable
+    parameters: [ "throttle", [ "throttle", "reactive" ] ]
+  delay: &delay
+    type: ArbitraryVariable
+    parameters: [ 10, [ 10, 20 ] ]
+  throttle: &throttle
+    type: ArbitraryVariable
+    parameters: [ 1, [ 1, 2, 5, 8 ] ]
+  delayPrototype: &delayPrototype
+    formula: new it.unibo.adapter.Exponential(delay);
+
+  throttlePrototype: &throttlePrototype
+    formula: new it.unibo.adapter.DiracComb(throttle);
 seeds:
   scenario: *seed
   simulation: *seed
+
 
 environment:
   type: Continuous2DEnvironment
@@ -26,7 +39,7 @@ environment:
         type: Trigger
         parameters: [ 0 ]
       type: InitFrpGlobalReaction
-      parameters: ["it.unibo.Channel", *prototype, "reactive"]
+      parameters: [ "it.unibo.Channel", [*delayPrototype, *throttlePrototype], *mode ]
     - time-distribution:
         type: DiracComb
         parameters: [ 1, 1 ]
@@ -44,7 +57,7 @@ deployments:
       concentration: false
     - molecule: obstacle
       concentration: false
-    - molecule: ticks
+    - molecule: rounds
       concentration: 0.0
     - molecule: destination
       concentration: false
@@ -65,6 +78,17 @@ deployments:
         parameters: [ -4, -1, 8, 2 ]
       molecule: obstacle
       concentration: true
+  programs:
+    - in:
+        type: Rectangle
+        parameters: [ -5, 3, 2, 2 ]
+      time-distribution:
+        type: Trigger
+        parameters: [ 100 ]
+      type: Event
+      actions:
+        - type: UpdateCellSink
+          parameters: [ "destination", true ]
 
 export:
   - type: CSVExporter
@@ -80,8 +104,20 @@ export:
       - molecule: "rounds"
         aggregators: [ sum ]
         value-filter: onlyfinite
-
+      - molecule: "messages"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+      - molecule: "source_gradient"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+      - molecule: "destination_gradient"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+      - molecule: "distance_between"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
 
 terminate:
   - type: AfterTime
-    parameters: 100.0
+    parameters: 200.0
+
