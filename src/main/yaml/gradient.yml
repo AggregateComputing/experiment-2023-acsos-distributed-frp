@@ -59,6 +59,8 @@ deployments:
       concentration: false
     - molecule: messages
       concentration: 0.0
+    - molecule: target
+      concentration: List(3, -4)
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]
@@ -69,6 +71,16 @@ deployments:
         parameters: [ -6, -1, 8, 2 ]
       molecule: obstacle
       concentration: true
+  programs:
+    #- in:
+    #    type: Rectangle
+    #    parameters: [  -4, -4, 1, 1  ]
+    #  time-distribution:
+    #    type: DiracComb
+    #    parameters: [ 50, 1 ]
+    #  type: Event
+    #  actions: { type:  MoveToTarget, parameters: [ "target", 0.1 ]}
+
 export:
   - type: CSVExporter
     parameters:
@@ -90,4 +102,4 @@ export:
 
 terminate:
   - type: AfterTime
-    parameters: 100.0
+    parameters: 300.0
