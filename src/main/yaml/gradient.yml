@@ -72,14 +72,14 @@ deployments:
       molecule: obstacle
       concentration: true
   programs:
-    #- in:
-    #    type: Rectangle
-    #    parameters: [  -4, -4, 1, 1  ]
-    #  time-distribution:
-    #    type: DiracComb
-    #    parameters: [ 50, 1 ]
-    #  type: Event
-    #  actions: { type:  MoveToTarget, parameters: [ "target", 0.1 ]}
+    - in:
+        type: Rectangle
+        parameters: [  -4, -4, 1, 1  ]
+      time-distribution:
+        type: DiracComb
+        parameters: [ 150, 1 ]
+      type: Event
+      actions: { type:  MoveToTarget, parameters: [ "target", 0.1 ]}
 
 export:
   - type: CSVExporter
@@ -98,7 +98,6 @@ export:
       - molecule: "messages"
         aggregators: [ sum ]
         value-filter: onlyfinite
-
 
 terminate:
   - type: AfterTime

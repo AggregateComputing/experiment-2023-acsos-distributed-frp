@@ -87,4 +87,4 @@ export:
 
 terminate:
   - type: AfterTime
-    parameters: 100.0
+    parameters: 300.0
