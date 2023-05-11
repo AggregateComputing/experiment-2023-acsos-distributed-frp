@@ -84,7 +84,7 @@ deployments:
         parameters: [ -5, 3, 2, 2 ]
       time-distribution:
         type: Trigger
-        parameters: [ 100 ]
+        parameters: [ 200 ]
       type: Event
       actions:
         - type: UpdateCellSink
@@ -94,7 +94,7 @@ export:
   - type: CSVExporter
     parameters:
       exportPath: "data"
-      fileNameRoot: "channel_reactive"
+      fileNameRoot: "channel"
       interval: 1.0
     data:
       - time
