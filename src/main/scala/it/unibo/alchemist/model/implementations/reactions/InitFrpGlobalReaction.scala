@@ -1,10 +1,6 @@
 package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.ProgramFactory
-import it.unibo.alchemist.model.implementations.actions.{
-  DistributedFrpIncarnation,
-  SendToNeighbor,
-  ThrottleNeighborhoodMessages
-}
+import it.unibo.alchemist.model.implementations.actions.{BroadcastToNeighborhood, DistributedFrpIncarnation, SendToNeighbor, ThrottleNeighborhoodMessages}
 import it.unibo.alchemist.model.implementations.PimpAlchemist.*
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime, Trigger}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
@@ -98,10 +94,12 @@ class InitFrpGlobalReaction[P <: Position[P]](
     val event = new Event(context.node, trigger)
     event.setActions(JList.of(actions.BroadcastToNeighborhood(context.node, environment, exportMessage)))
     // remove the message before sending, otherwise it will create to many reactions
-    context.node.getReactions.asScala.toList.foreach { reaction =>
-      context.node.removeReaction(reaction)
-      environment.getSimulation.reactionRemoved(reaction)
-    }
+    context.node.getReactions.asScala.toList
+      .filter(reaction => reaction.getActions.asScala.toList.exists(_.isInstanceOf[BroadcastToNeighborhood[_]]))
+      .foreach { reaction =>
+        context.node.removeReaction(reaction)
+        environment.getSimulation.reactionRemoved(reaction)
+      }
     context.node.updateConcentration[Double](Molecules.MessagesSent, _ + neighbor)
     context.node.addReaction(event)
     environment.getSimulation.reactionAdded(event)

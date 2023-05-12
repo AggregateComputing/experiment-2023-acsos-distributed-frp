@@ -14,7 +14,7 @@ variables:
     parameters: [0.1, [0.1]]
   mode: &mode
     type: ArbitraryVariable
-    parameters: [ "throttle", [ "throttle", "reactive" ] ]
+    parameters: [ "reactive", [ "throttle", "reactive" ] ]
   delay: &delay
     type: ArbitraryVariable
     parameters: [ 10, [ 10, 20 ] ]
