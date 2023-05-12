@@ -35,6 +35,15 @@ _program: &program
       type: ExponentialTime
       parameters: [ *delay ]
     program: send
+  - in:
+      type: Rectangle
+      parameters: [ -4, -4, 1, 1 ]
+    time-distribution:
+      type: DiracComb
+      parameters: [ 150, 1 ]
+    type: Event
+    actions: { type: MoveToTarget, parameters: [ "target", 0.1 ] }
+
 environment:
   type: Continuous2DEnvironment
   parameters: []
@@ -54,6 +63,8 @@ deployments:
       concentration: 0.0
     - molecule: messages
       concentration: 0.0
+    - molecule: target
+      concentration: List(3, -4)
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]

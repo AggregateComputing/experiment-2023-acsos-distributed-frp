@@ -39,6 +39,16 @@ _program: &program
       type: ExponentialTime
       parameters: [ *delay ]
     program: send
+  - in:
+      type: Rectangle
+      parameters: [ -5, 3, 2, 2 ]
+    time-distribution:
+      type: Trigger
+      parameters: [ 200 ]
+    type: Event
+    actions:
+      - type: SetLocalMoleculeConcentration
+        parameters: [ "destination", true ]
 
 network-model:
   type: ConnectWithinDistance
