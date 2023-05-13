@@ -67,6 +67,12 @@ deployments:
       concentration: false
     - molecule: messages
       concentration: 0.0
+    - molecule: distance_between
+      concentration: 0.0
+    - molecule: destination_gradient
+      concentration: 0.0
+    - molecule: source_gradient
+      concentration: 0.0
     - in:
         type: Rectangle
         parameters: [ -6, -6, 2, 2 ]
@@ -101,7 +107,15 @@ export:
       - molecule: "messages"
         aggregators: [ sum ]
         value-filter: onlyfinite
-
+      - molecule: "source_gradient"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+      - molecule: "destination_gradient"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
+      - molecule: "distance_between"
+        aggregators: [ sum ]
+        value-filter: onlyfinite
 terminate:
   - type: AfterTime
     parameters: 300.0
