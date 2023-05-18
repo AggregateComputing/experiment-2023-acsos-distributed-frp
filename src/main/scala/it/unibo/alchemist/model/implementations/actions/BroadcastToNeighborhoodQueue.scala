@@ -26,4 +26,4 @@ case class BroadcastToNeighborhoodQueue[P <: Position[P]](
     environment.getSimulation.reactionRemoved(findReaction.get)
     from.removeReaction(findReaction.get)
 
-  override def getContext: Context = Context.NEIGHBORHOOD
+  override def getContext: Context = Context.LOCAL

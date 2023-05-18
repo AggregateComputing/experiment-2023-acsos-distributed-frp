@@ -3,7 +3,7 @@ incarnation: scafi
 variables:
   seed: &seed
     min: 0
-    max: 16
+    max: 64
     step: 1
     default: 0
   spacing: &spacing
@@ -14,7 +14,7 @@ variables:
     parameters: [0.1, [0.1]]
   mode: &mode
     type: ArbitraryVariable
-    parameters: [ "reactive", [ "throttle", "reactive" ] ]
+    parameters: [ "throttle", [ "throttle", "reactive" ] ]
   delay: &delay
     type: ArbitraryVariable
     parameters: [ 10, [ 10, 20 ] ]
@@ -91,6 +91,9 @@ deployments:
           parameters: [ "destination", true ]
 
 export:
+  #- type: SnapshotExporter
+  #  parameters: [ "snapshots", "channel", 1, 10 ]
+  #  data: [ ]
   - type: CSVExporter
     parameters:
       exportPath: "data"

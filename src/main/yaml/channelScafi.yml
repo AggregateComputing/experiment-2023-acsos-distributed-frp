@@ -3,7 +3,7 @@ incarnation: scafi
 variables:
   seed: &seed
     min: 0
-    max: 16
+    max: 64
     step: 1
     default: 0
   spacing: &spacing
