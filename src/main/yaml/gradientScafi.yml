@@ -17,7 +17,7 @@ variables:
     parameters: [ "proactive", [ "proactive" ]]
   delay: &delay
     type: ArbitraryVariable
-    parameters: [ 10, [ 10, 20 ] ]
+    parameters: [ 10, [ 10 ] ]
   throttle: &throttle
     type: ArbitraryVariable
     parameters: [ 1, [ 1, 2, 5, 8 ] ]
@@ -42,7 +42,7 @@ _program: &program
       type: DiracComb
       parameters: [ 150, 1 ]
     type: Event
-    actions: { type: MoveFor, parameters: [ 0.1, 3 ] }
+    actions: { type: MoveFor, parameters: [ 0.1, 8.5 ] }
 
 environment:
   type: Continuous2DEnvironment
