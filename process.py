@@ -3,7 +3,11 @@ import xarray as xr
 import re
 from pathlib import Path
 import collections
-
+import seaborn as sns
+import pandas as pd
+sns.set_theme(style="darkgrid")
+sns.set_context("paper")
+sns.set(font_scale=1.8)
 def distance(val, ref):
     return abs(ref - val)
 vectDistance = np.vectorize(distance)
@@ -185,10 +189,10 @@ if __name__ == '__main__':
     # How to name the summary of the processed data
     pickleOutput = 'data_summary'
     # Experiment prefixes: one per experiment (root of the file name)
-    experiments = ['gradient', 'channel', "collect"]
+    experiments = ['gradient', 'channel']
     floatPrecision = '{: 0.3f}'
     # Number of time samples 
-    timeSamples = 50
+    timeSamples = 200
     # time management
     minTime = 0
     maxTime = 300
@@ -415,6 +419,106 @@ if __name__ == '__main__':
         current_experiment_means = means[experiment]
         current_experiment_errors = stdevs[experiment]
         print(current_experiment_means)
-        generate_all_charts(current_experiment_means, current_experiment_errors, basedir = f'{experiment}/all')
+        #generate_all_charts(current_experiment_means, current_experiment_errors, basedir = f'{experiment}/all')
+    
+    gradient = means['gradient']
+    gradient_error = stdevs['gradient']
+    channel = means['channel']
+    channel_error = stdevs['channel']
+    basedir = f'{experiment}/all'
+    
+    dfs = {}
+    for experiment in experiments:
+        current_means = means[experiment]
+        current_std = stdevs[experiment]
+        #current_with_confidence = [current_means]
+        current_with_confidence = [current_means, current_means + current_std, current_means - current_std]
         
+        current_dfs = [ x.to_dataframe() for x in current_with_confidence ]
+        current_df = pd.concat(current_dfs).reset_index()
+        current_df = current_df[current_df['delay'] == 10]
+        current_df['throttle'] = 1 / current_df['throttle']
+        current_df.loc[current_df['mode'] == 'reactive', ['throttle']] = 0
+        current_df.rename(
+            columns = {
+                'messages[sum]' : '# messages', 
+                'root[mean]' : 'output (mean)' ,
+                "source_gradient[sum]" : '# G[source]',
+                "destination_gradient[sum]" : '# G[destination]',
+            }, 
+            inplace=True,
+        )
+        current_df.loc[current_df['mode'] == 'proactive', 'mode'] = "round"
+        dfs[experiment] = current_df
+   
+    def produce_plot_for_simple_comparison(name):
+        sns.set(font_scale=1.8)
+        basedir = f'{name}'
+        base_folder = f'{output_directory}/{basedir}'
+        Path(base_folder).mkdir(parents=True, exist_ok=True)
+        df = dfs[name]
+        df = df[df['mode'] != "round"]
+        
+        ax = sns.lineplot(data=df, x="time", y="# messages", hue="throttle", style="mode", palette='tab10')
+        sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+        fig = ax.get_figure()
+        fig.savefig(f'{base_folder}/{name}-messages.pdf', bbox_inches='tight', pad_inches=0)
+        
+        fig.clf()
+        ax = sns.lineplot(data=df, x="time", y="output (mean)", hue="throttle", style="mode", palette='tab10')
+        sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+        fig.savefig(f'{base_folder}/{name}-root.pdf', bbox_inches='tight', pad_inches=0)
+        fig.clf()
+        
+        df = dfs[name]
+        df = df.drop(df[(df['mode'] == "reactive")].index)
+        df = df.drop(df[(df['mode'] == "round") & (df['throttle'] != 1)].index)
+        ax = sns.lineplot(data=df, x="time", y="# messages", hue="throttle", style="mode", palette='viridis')
+        fig.savefig(f'{base_folder}/{name}-messages-round.pdf', bbox_inches='tight', pad_inches=0)
+        fig.clf()
+        
+        ax = sns.lineplot(data=df, x="time", y="output (mean)", hue="throttle", style="mode", palette='viridis')
+        fig.savefig(f'{base_folder}/{name}-messages-round.pdf', bbox_inches='tight', pad_inches=0)
+        fig.clf()
+        
+        df = dfs[name]
+        df = df.drop(df[(df['mode'] == "reactive")].index)
+        ax = sns.lineplot(data=df, x="time", y="# messages", hue="throttle", style="mode", palette='viridis')
+        fig = ax.get_figure()
+        fig.savefig(f'{base_folder}/{name}-messages-round.pdf', bbox_inches='tight', pad_inches=0)    
+        fig.clf()
+        
+        df = dfs[name]
+        df = df.drop(df[(df['mode'] == "round") & (df['throttle'] != 1.0)].index)
+        ax = sns.relplot(data=df, x="time", y="output (mean)", hue="throttle", col="mode", kind="line", palette='tab10')
+        fig = ax.fig
+        fig.savefig(f'{base_folder}/{name}-output-rel.pdf', bbox_inches='tight', pad_inches=0)
+        fig.clf()
+        ax = sns.relplot(data=df, x="time", y="# messages", hue="throttle", col="mode", kind="line", palette='tab10')
+        for axes in ax.axes.flat:    
+            axes.ticklabel_format(axis="y", style="sci", scilimits=(2, 3))
+        fig = ax.fig
+        fig.savefig(f'{base_folder}/{name}-messages-rel.pdf', bbox_inches='tight', pad_inches=0)
+        fig.clf()
+        
+    for experiment in experiments:
+        produce_plot_for_simple_comparison(experiment)
+    
+    sns.set(font_scale=1.8)
+    # Channel
+    df = dfs['channel']
+    df = df[df['mode'] == 'throttle']
+    df = df[df['throttle'] == 1]
+    #df = df.drop(df[(df['mode'] == "reactive")].index)
+    destination = df[["# G[destination]", "time", 'throttle']]
+    destination = destination.rename(columns={"# G[destination]" : "# evaluations"}) 
+    destination["subprogram"] = "G[destination]"
+    source = df[["# G[source]", "time", 'throttle']]
+    source["subprogram"] = "G[source]"
+    source = source.rename(columns = {"# G[source]" : "# evaluations"})
+    programs = [source, destination]
+    program_pd = pd.concat(programs).reset_index()
+    ax = sns.lineplot(data=program_pd, x="time", y="# evaluations", hue="subprogram")
+    fig = ax.get_figure()
+    fig.savefig(f'{output_directory}/message_count.pdf', bbox_inches='tight', pad_inches=0)
 # Custom charting
