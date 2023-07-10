@@ -29,7 +29,7 @@ Additionally, black dots in the simulations represent obstacles or zones in whic
 | ![gradient](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/assets/23448811/7bb3ef9c-db3b-471f-9afc-b763e9041049)  |  ![channel](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/assets/23448811/c2c85dc2-f7e2-4e57-aa59-d08ecee731ef)|
 
 
-## Reproduce the entire experiment
+## Getting started
 
 **WARNING**: re-running the whole experiment may take a very long time on a normal computer.
 
@@ -68,6 +68,8 @@ To make changes to existing experiments and explore/reuse,
 we recommend to use the IntelliJ Idea IDE.
 Opening the project in IntelliJ Idea will automatically import the project, download the dependencies,
 and allow for a smooth development experience.
+
+When the GUI pop-up, press <kbd>P</kbd> to see the dynamics described in the articles.
 
 ## Regenerate the charts
 
