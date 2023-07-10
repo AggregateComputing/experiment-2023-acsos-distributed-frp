@@ -1,13 +1,23 @@
-# Alchemist Experiments Bootstrap
+# FRASP: Scala-based DSL for Distribured FRP -- ACSOS 2023 Showcase
 
-A customized Alchemist Primer with releases and data analysis ready.
+This repository contains the experiments discussed in the paper entitled: "Self-Organisation Programming: A Functional Reactive Macro Approach" submitted @ ACSOS 2023.
+For more details about the FRASP library, please refer to the [library repository](https://github.com/cric96/distributed-frp).
 
-Upon generation of an experiment from this template:
-1. add a secret github token with `repo` permissions named `DEPLOYMENT_TOKEN`;
-2. edit the project name in `settings.gradle.kts`;
-3. edit the DockerHub user name in `docker-compose.yml`;
-4. add a secret called `DOCKER_PASSWORD` with your DockerHub password;
-5. edit the DockerHub password in `.github/workflows/build-and-deploy.yml`;
+## Description
+FRASP (Field-based Reactive Aggregate Computing) is a reactive model inspired by aggregate computing, which utilizes a self-organizing top-down global-to-local approach for programming self-organizing collective behaviors. For a more detailed understanding, please refer to the documentation of the [ScaFi library](https://scafi.github.io/) or read the survey paper titled ["From field-based coordination to aggregate computing"](https://doi.org/10.1007/978-3-319-92408-3_12).
+
+This repository focuses on performing simulations to empirically evaluate the reactive implementation of FRASP. The objectives of these simulations are as follows:
+
+1. Ensure that the reactive implementation produces the same collective behaviors as the proactive implementation.
+2. Demonstrate the improved efficiency of the reactive implementation in scenarios with limited environmental modifications.
+3. Show the ability of the reactive implementation to compute only the necessary parts of the program that require recomputation.
+
+To validate the aforementioned statements, we provide two commonly used simulations from the field coordination literature: the self-healing gradient and the channel.
+
+- The self-healing gradient is a bio-inspired pattern where each node computes its distance from a source zone solely based on neighborhood information, without relying on GPS.
+- The channel simulation creates a logical channel, represented as a Boolean field, linking a source zone to a destination zone.
+
+Through these simulations, we aim to showcase the effectiveness and benefits of FRASP's reactive approach in achieving self-organizing collective behaviors while improving efficiency in specific scenarios.
 
 ## Reproduce the entire experiment
 
