@@ -69,7 +69,7 @@ we recommend to use the IntelliJ Idea IDE.
 Opening the project in IntelliJ Idea will automatically import the project, download the dependencies,
 and allow for a smooth development experience.
 
-When the GUI pop-up, press <kbd>P</kbd> to see the dynamics described in the articles.
+When the GUI pop-up, press <kbd>P</kbd> to see the dynamics described in the article.
 
 ## Regenerate the charts
 
