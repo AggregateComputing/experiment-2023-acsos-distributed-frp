@@ -17,7 +17,17 @@ To validate the aforementioned statements, we provide two commonly used simulati
 - The self-healing gradient is a bio-inspired pattern where each node computes its distance from a source zone solely based on neighborhood information, without relying on GPS.
 - The channel simulation creates a logical channel, represented as a Boolean field, linking a source zone to a destination zone.
 
-Through these simulations, we aim to showcase the effectiveness and benefits of FRASP's reactive approach in achieving self-organizing collective behaviors while improving efficiency in specific scenarios.
+Through these simulations, we aim to showcase the effectiveness and benefits of FRASP's reactive approach in achieving self-organizing collective behaviors, as well as its improved efficiency in specific scenarios. 
+
+In both simulation cases, the nodes are deployed in a random perturbed lattice, providing a realistic environment. The color of each node represents the output of the FRASP program. For the self-healing gradient simulation, please refer to the [Gradient.scala](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/blob/master/src/main/scala/it/unibo/Gradient.scala) file, and for the channel simulation, please refer to [Channel.scala](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/blob/master/src/main/scala/it/unibo/Channel.scala).
+
+Additionally, black dots in the simulations represent obstacles or zones in which nodes cannot communicate with each other. This feature adds an additional layer of complexity to the scenarios and showcases how FRASP handles such constraints.
+
+
+|  Gradient | Channel  |
+|---|---|
+| ![gradient](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/assets/23448811/7bb3ef9c-db3b-471f-9afc-b763e9041049)  |  ![channel](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/assets/23448811/c2c85dc2-f7e2-4e57-aa59-d08ecee731ef)|
+
 
 ## Reproduce the entire experiment
 
