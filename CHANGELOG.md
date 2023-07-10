@@ -1,3 +1,59 @@
+## 1.0.0 (2023-07-10)
+
+
+### Features
+
+* add C as a building block ([d490c21](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/d490c21e44eb9044cc81a388aec90baa0d514cfc))
+* add examples for dente's presentation ([7a7cfd3](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/7a7cfd364e6e02e290af34fcc32c8b3217eb0391))
+* add examples in ScaFi ([53c996f](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/53c996ff93f213ec468a9db128ff4f2270d107fe))
+* add share operator, add bulk messages send ([a738a1a](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/a738a1a78ce91a502805dff6d13058769b660234))
+* depends on remote dependency ([fb9193b](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/fb9193bdda3cb15bc5f6aeab3c177b9c1e6d2358))
+* fix channel ([723b729](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/723b729893f3845d91f50dde4df0a61e8ca6156d))
+* more example for the simulation ([9a62711](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/9a62711b620a62f1c4b095960cf009a1eddc62ae))
+* prepare for long simulation, align files, fix unexeptected behaviours ([7fc147f](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/7fc147fd19636dc9ffa2838880f7b68db8c5c092))
+* prepare for simulations ([9bbbf54](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/9bbbf54b300c91567a98ebd598069c293e3e892e))
+* split the global reaction in two reactions, one for initialization and the other for heartbeats ([6e980ef](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/6e980ef11711bd45086d5988007102b401624c7b))
+
+
+### Bug Fixes
+
+* ci (avoid running the whole experiment) ([71202a6](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/71202a6d7ce0d9f905cb0b5669c89437fbe89d04))
+* **ci:** add requirements for seaborn ([954df52](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/954df5255bed55f8f1b7fac5a015e32d0cb39c64))
+* **ci:** add the right generated data ([eadd0be](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/eadd0be0afd12d4c9917e81cfc033b8244f8313e))
+* **docker-compose:** put the correct username ([0f3479c](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/0f3479c54be95763f7c3a5c872929d9a1dbec21d))
+* movement ([0345b65](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/0345b658065a48d352d772cf107e182e6d9dfebf))
+
+
+### Refactoring
+
+* prefer to use shared molecules instead of string for context ([0b1324a](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/0b1324a9639da591a381ad449496255f5cb871db))
+
+
+### Build and continuous integration
+
+* try to use better permissions for the default token ([0db32d8](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/0db32d89b742c5d48b402c18f9c14922be343afa))
+
+
+### General maintenance
+
+* add leader election ([e6ffca0](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/e6ffca0db0ceaf2de4dc7f4bf2eb8130ca731b5a))
+* add messages sent, fix reactive policy, prepare for multiple simulations ([9cafcaa](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/9cafcaa4f8591cccaa36188a5aa17975342bf4b8))
+* add more for channel ([a103903](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/a103903a9576deadc524083f4ad07b5ba863f21a))
+* add movement as test ([9cd903e](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/9cd903eaa2e9ba1b27e0a11cd366d260bfde00d4))
+* add right extracto also for channel scafi ([a128dba](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/a128dba41d464ee85599d3949fecb9c922b77ea4))
+* add variables in building ([ebd238d](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/ebd238dd31a6fbddc46af5599541788871a75d27))
+* change channel parameters ([c5ccdf2](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/c5ccdf20f6dbbaf9ee187849606d0d9f19809172))
+* **ci:** update docker username ([06ca04b](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/06ca04b120dec72dfc2b0a9ffc69934fed7f12aa))
+* clean up the incarnation, align sink with molecules ([4a343ab](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/4a343ab004846f6ad3953f9497f9df91e1c9c7ed))
+* fix reactive policy ([c8a2f7e](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/c8a2f7e5e1a2049d38b86eb437c5a1e5185f7935))
+* fix the node placement ([7949cc2](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/7949cc242d9536251f0ee500d665b7dcaa181f0b))
+* minors ([b8f233e](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/b8f233e705daabf6ded9dca353476bfa9e40b825))
+* more on configuration ([a963eed](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/a963eed11460eb446736e82a32e5ca44a40b7638))
+* **plotter:** adjust the seaborn version ([9da29a9](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/9da29a9af5c699c85812bcd57fb64be1180e247d))
+* prepare for large batch ([1fa875f](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/1fa875faef0b011eb3277cabc249b98a9cb28eeb))
+* prepare for submission ([0f338d0](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/0f338d0ae64af685102983ccdd35da5f80413d05))
+* update sim ([18885e7](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/18885e7d379bcf8cc342c1ce9390605ee8e3c617))
+
 ## [1.1.3](https://github.com/DanySK/alchemist-experiments-bootstrap/compare/1.1.2...1.1.3) (2023-01-29)
 
 
