@@ -1,3 +1,25 @@
+## [1.1.0](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/compare/1.0.0...1.1.0) (2023-07-14)
+
+
+### Features
+
+* add cropper script ([d04656a](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/d04656a235a94f4fbf481c89d88494ff264b3dd4))
+* add license ([2522689](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/25226896c7001d254ac8174610bd4c838c107270))
+
+
+### Documentation
+
+* add description and intro ([2c27c86](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/2c27c86177fffeac24d748d01699a6ec4838650f))
+* add description of how to start a simulation ([077ad35](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/077ad35bbf166995ff4337a5719fb14cb16f25cb))
+* minor ([dd6cc7a](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/dd6cc7a498ef0ffe110a148670c184b723342bd8))
+* more discussion on description ([19524ec](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/19524ec7ff6dd0cce51e6d23ac4e4aca92de9f70))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.0.0 [skip ci] ([6bc79d9](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/6bc79d97bbf574a65366ea5b95fa9b8cdc128b9c))
+* update libs.version.toml ([68f7ec7](https://github.com/AggregateComputing/experiment-2023-acsos-distributed-frp/commit/68f7ec7ae82e2ccd7200dfb66dace9c357037dd1))
+
 ## 1.0.0 (2023-07-10)
 
 
