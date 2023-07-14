@@ -1,14 +1,17 @@
 [versions]
 alchemist = "25.14.6"
 kotlin = "1.8.10"
+ui = "5.0.0"
 
 [libraries]
 alchemist = { module = "it.unibo.alchemist:alchemist", version.ref = "alchemist" }
 alchemist-protelis = { module = "it.unibo.alchemist:alchemist-incarnation-protelis", version.ref = "alchemist" }
 alchemist-scafi = { module = "it.unibo.alchemist:alchemist-incarnation-scafi", version.ref = "alchemist" }
-
+alchemist-ui-tooling = { module = "it.unibo.alchemist:alchemist-ui-tooling", version.ref = "alchemist" }
+alchemist-swingui = { module = "it.unibo.alchemist:alchemist-swingui", version.ref = "alchemist" }
+tooling-gui = { module = "org.danilopianini:javalib", version.ref = "ui" }
 [bundles]
-alchemist-protelis = [ "alchemist", "alchemist-scafi" ]
+alchemist-protelis = [ "alchemist", "alchemist-scafi", "alchemist-ui-tooling", "alchemist-swingui", "tooling-gui" ]
 
 [plugins]
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "1.1.4" }
